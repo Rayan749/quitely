@@ -3,11 +3,15 @@ import { FeedTree } from './components/feeds';
 import { NewsList } from './components/news';
 import { ContentViewer } from './components/content';
 import { useFeedStore, useNewsStore } from './stores';
+import { useKeyboardShortcuts } from './hooks';
 import { useEffect } from 'react';
 
 function App() {
   const { loadFeeds, selectedFeedId } = useFeedStore();
   const { clearNews } = useNewsStore();
+
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts();
 
   useEffect(() => {
     loadFeeds();
