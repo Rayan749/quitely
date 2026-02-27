@@ -46,6 +46,7 @@ pub fn run() {
             commands::mark_all_read,
             commands::delete_news,
             commands::restore_news,
+            commands::cleanup_deleted_news,
             commands::get_setting,
             commands::set_setting,
             commands::delete_setting,

@@ -49,3 +49,9 @@ pub fn restore_news(db: State<'_, DbState>, ids: Vec<i64>) -> Result<(), String>
     };
     crate::db::news::update(&mut conn, &update)
 }
+
+#[tauri::command]
+pub fn cleanup_deleted_news(db: State<'_, DbState>, older_than_days: i64) -> Result<usize, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::news::cleanup_deleted(&conn, older_than_days)
+}
