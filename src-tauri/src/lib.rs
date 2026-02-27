@@ -1,4 +1,5 @@
 mod db;
+mod models;
 
 use db::DbState;
 use tauri::Manager;
