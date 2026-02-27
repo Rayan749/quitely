@@ -1,6 +1,11 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, SettingsFilled } from '@fluentui/react-icons';
+import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
+import { SettingsDialog } from '../settings';
+import { open } from '@tauri-apps/plugin-dialog';
+import { readFile, writeFile } from '@tauri-apps/plugin-fs';
+import { importOpml, exportOpml } from '../../api/commands';
+import { useFeedStore } from '../../stores';
 
 const useStyles = makeStyles({
   toolbar: {
@@ -14,16 +19,73 @@ const useStyles = makeStyles({
 
 interface AppToolbarProps {
   onRefresh?: () => void;
-  onSettings?: () => void;
 }
 
-export function AppToolbar({ onRefresh, onSettings }: AppToolbarProps) {
+export function AppToolbar({ onRefresh }: AppToolbarProps) {
   const styles = useStyles();
+  const { loadFeeds } = useFeedStore();
+
+  const handleImportOpml = async () => {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{ name: 'OPML', extensions: ['opml', 'xml'] }],
+      });
+
+      if (selected) {
+        const content = await readFile(selected as string);
+        const text = new TextDecoder().decode(content);
+        const count = await importOpml(text);
+        console.log(`Imported ${count} feeds`);
+        loadFeeds();
+      }
+    } catch (error) {
+      console.error('Failed to import OPML:', error);
+    }
+  };
+
+  const handleExportOpml = async () => {
+    try {
+      const selected = await open({
+        multiple: false,
+        directory: true,
+      });
+
+      if (selected) {
+        const opmlContent = await exportOpml();
+        const filePath = `${selected}/quitely-feeds.opml`;
+        await writeFile(filePath, new TextEncoder().encode(opmlContent));
+        console.log('Exported feeds to:', filePath);
+      }
+    } catch (error) {
+      console.error('Failed to export OPML:', error);
+    }
+  };
 
   return (
     <div className={styles.toolbar}>
       <Toolbar>
         <AddFeedDialog />
+
+        <ToolbarDivider />
+
+        <Button
+          appearance="subtle"
+          icon={<ArrowUploadFilled />}
+          onClick={handleImportOpml}
+          title="Import OPML"
+        >
+          Import
+        </Button>
+
+        <Button
+          appearance="subtle"
+          icon={<ArrowDownloadFilled />}
+          onClick={handleExportOpml}
+          title="Export OPML"
+        >
+          Export
+        </Button>
 
         <ToolbarDivider />
 
@@ -38,14 +100,7 @@ export function AppToolbar({ onRefresh, onSettings }: AppToolbarProps) {
 
         <ToolbarDivider />
 
-        <Button
-          appearance="subtle"
-          icon={<SettingsFilled />}
-          onClick={onSettings}
-          title="Settings"
-        >
-          Settings
-        </Button>
+        <SettingsDialog />
       </Toolbar>
     </div>
   );
