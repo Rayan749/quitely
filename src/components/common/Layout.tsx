@@ -4,7 +4,6 @@ import {
   webLightTheme,
   webDarkTheme,
   makeStyles,
-  tokens,
 } from '@fluentui/react-components';
 import { Sidebar } from './Sidebar';
 
@@ -14,7 +13,6 @@ const useStyles = makeStyles({
     height: '100vh',
     width: '100vw',
     overflow: 'hidden',
-    backgroundColor: tokens.backgroundColorDefault,
   },
   main: {
     display: 'flex',

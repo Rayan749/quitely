@@ -1,50 +1,38 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { Layout } from './components/common';
+import { useFeedStore } from './stores';
+import { useEffect } from 'react';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const { loadFeeds } = useFeedStore();
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    loadFeeds();
+  }, [loadFeeds]);
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <Layout>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Feed Tree Panel - Phase 2 */}
+        <div style={{ width: '250px', borderRight: '1px solid #e0e0e0', padding: '8px' }}>
+          <h3>Feeds</h3>
+          <p>Loading feeds...</p>
+        </div>
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {/* News List Panel - Phase 3 */}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <div style={{ flex: '0 0 300px', borderBottom: '1px solid #e0e0e0', padding: '8px' }}>
+            <h3>News List</h3>
+            <p>Select a feed to view news</p>
+          </div>
+
+          {/* Content Viewer - Phase 3 */}
+          <div style={{ flex: 1, padding: '8px', overflow: 'auto' }}>
+            <h3>Content</h3>
+            <p>Select a news item to view content</p>
+          </div>
+        </div>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    </Layout>
   );
 }
 

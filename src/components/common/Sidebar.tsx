@@ -1,4 +1,4 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
 import { useUIStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -7,8 +7,8 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     width: '200px',
     minWidth: '200px',
-    backgroundColor: tokens.fillStyleNeutralBackground1,
-    borderRight: `1px solid ${tokens.strokeColorNeutral1}`,
+    backgroundColor: '#f5f5f5',
+    borderRight: '1px solid #e0e0e0',
   },
   categoriesPanel: {
     flex: 1,
@@ -28,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.categoriesPanel}>
-        <div style={{ padding: '16px 8px', color: tokens.colorNeutralForeground3 }}>
+        <div style={{ padding: '16px 8px', color: '#666' }}>
           未读
           <br />
           收藏
