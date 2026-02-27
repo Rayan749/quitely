@@ -1,5 +1,5 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, SettingsFilled, AddFilled } from '@fluentui/react-icons';
+import { ArrowSyncFilled, SettingsFilled } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
 
 const useStyles = makeStyles({
