@@ -92,3 +92,14 @@ export async function deleteSetting(key: string): Promise<void> {
 export async function getAllSettings(): Promise<[string, string][]> {
   return invoke<[string, string][]>('get_all_settings');
 }
+
+// Feed update commands
+export interface UpdateFeedResult {
+  feed_id: number;
+  new_count: number;
+  total_count: number;
+}
+
+export async function updateFeedArticles(feedId: number): Promise<UpdateFeedResult> {
+  return invoke<UpdateFeedResult>('update_feed_articles', { feedId });
+}
