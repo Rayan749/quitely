@@ -1,6 +1,14 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { Feed, CreateFeed, UpdateFeed, FeedCount, News, NewsFilter, NewsUpdate } from '../types';
 
+// Parsed feed info from URL
+export interface ParsedFeed {
+  title: string;
+  description?: string;
+  html_url?: string;
+  language?: string;
+}
+
 // Feed commands
 export async function getFeeds(): Promise<Feed[]> {
   return invoke<Feed[]>('get_feeds');
@@ -24,6 +32,14 @@ export async function deleteFeed(id: number): Promise<void> {
 
 export async function updateFeedCounts(counts: FeedCount[]): Promise<void> {
   return invoke('update_feed_counts', { counts });
+}
+
+export async function fetchFeedInfo(url: string): Promise<ParsedFeed> {
+  return invoke<ParsedFeed>('fetch_feed_info', { url });
+}
+
+export async function addFeedWithFetch(url: string, parentId?: number): Promise<Feed> {
+  return invoke<Feed>('add_feed_with_fetch', { url, parentId });
 }
 
 // News commands (placeholder for Phase 3)
