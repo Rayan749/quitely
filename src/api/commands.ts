@@ -107,3 +107,7 @@ export async function updateFeedArticles(feedId: number): Promise<UpdateFeedResu
 export async function updateAllFeeds(): Promise<UpdateFeedResult[]> {
   return invoke<UpdateFeedResult[]>('update_all_feeds');
 }
+
+export async function cleanupDeletedNews(olderThanDays: number): Promise<number> {
+  return invoke<number>('cleanup_deleted_news', { olderThanDays });
+}
