@@ -228,6 +228,94 @@ pub async fn update_feed_articles(
     })
 }
 
+#[tauri::command]
+pub async fn update_all_feeds(db: State<'_, DbState>) -> Result<Vec<UpdateFeedResult>, String> {
+    // Get all feeds
+    let feeds = {
+        let conn = db.0.lock().map_err(|e| e.to_string())?;
+        crate::db::feeds::get_all(&conn)?
+    };
+
+    let fetcher = FeedFetcher::new();
+    let mut results = Vec::new();
+
+    for feed in &feeds {
+        if feed.xml_url.is_empty() {
+            continue;
+        }
+
+        match fetcher.fetch_and_parse(&feed.xml_url).await {
+            Ok(parsed) => {
+                let conn = db.0.lock().map_err(|e| e.to_string())?;
+                let mut new_count = 0;
+
+                for entry in &parsed.entries {
+                    let exists = if let Some(ref guid) = entry.guid {
+                        conn.query_row(
+                            "SELECT COUNT(*) FROM news WHERE guid = ?1",
+                            rusqlite::params![guid],
+                            |row| row.get::<_, i64>(0),
+                        ).unwrap_or(0) > 0
+                    } else if let Some(ref link) = entry.link {
+                        conn.query_row(
+                            "SELECT COUNT(*) FROM news WHERE link = ?1",
+                            rusqlite::params![link],
+                            |row| row.get::<_, i64>(0),
+                        ).unwrap_or(0) > 0
+                    } else {
+                        false
+                    };
+
+                    if !exists {
+                        let news = News {
+                            id: 0,
+                            feed_id: feed.id,
+                            guid: entry.guid.clone(),
+                            title: entry.title.clone(),
+                            author: entry.author.clone(),
+                            author_email: entry.author_email.clone(),
+                            link: entry.link.clone(),
+                            description: entry.description.clone(),
+                            content: entry.content.clone(),
+                            published_at: entry.published_at.clone(),
+                            received_at: chrono::Utc::now().to_rfc3339(),
+                            is_read: false,
+                            is_new: true,
+                            is_starred: false,
+                            is_deleted: false,
+                            category: entry.category.clone(),
+                            labels: vec![],
+                            enclosure_url: entry.enclosure_url.clone(),
+                            enclosure_type: entry.enclosure_type.clone(),
+                        };
+
+                        if crate::db::news::create(&conn, &news).is_ok() {
+                            new_count += 1;
+                        }
+                    }
+                }
+
+                let now = chrono::Utc::now().to_rfc3339();
+                let _ = conn.execute(
+                    "UPDATE feeds SET last_updated = ?1 WHERE id = ?2",
+                    rusqlite::params![now, feed.id],
+                );
+
+                results.push(UpdateFeedResult {
+                    feed_id: feed.id,
+                    new_count,
+                    total_count: parsed.entries.len(),
+                });
+            }
+            Err(e) => {
+                eprintln!("Failed to update feed {}: {}", feed.id, e);
+            }
+        }
+    }
+
+    Ok(results)
+}
+
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct UpdateFeedResult {
     pub feed_id: i64,

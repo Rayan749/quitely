@@ -103,3 +103,7 @@ export interface UpdateFeedResult {
 export async function updateFeedArticles(feedId: number): Promise<UpdateFeedResult> {
   return invoke<UpdateFeedResult>('update_feed_articles', { feedId });
 }
+
+export async function updateAllFeeds(): Promise<UpdateFeedResult[]> {
+  return invoke<UpdateFeedResult[]>('update_all_feeds');
+}

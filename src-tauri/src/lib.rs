@@ -38,6 +38,7 @@ pub fn run() {
             commands::import_opml,
             commands::export_opml,
             commands::update_feed_articles,
+            commands::update_all_feeds,
             commands::get_news,
             commands::get_news_item,
             commands::update_news,

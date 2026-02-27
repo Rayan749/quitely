@@ -27,13 +27,9 @@ function App() {
     }
   }, [selectedFeedId, clearNews]);
 
-  const handleRefresh = () => {
-    loadFeeds();
-  };
-
   return (
     <Layout>
-      <AppToolbar onRefresh={handleRefresh} />
+      <AppToolbar />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Feed Tree Panel */}
         <div style={{ width: '250px', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>

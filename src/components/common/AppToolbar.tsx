@@ -4,8 +4,8 @@ import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { importOpml, exportOpml } from '../../api/commands';
-import { useFeedStore } from '../../stores';
+import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
+import { useFeedStore, useNewsStore } from '../../stores';
 
 const useStyles = makeStyles({
   toolbar: {
@@ -17,13 +17,10 @@ const useStyles = makeStyles({
   },
 });
 
-interface AppToolbarProps {
-  onRefresh?: () => void;
-}
-
-export function AppToolbar({ onRefresh }: AppToolbarProps) {
+export function AppToolbar() {
   const styles = useStyles();
-  const { loadFeeds } = useFeedStore();
+  const { loadFeeds, selectedFeedId } = useFeedStore();
+  const { loadNews } = useNewsStore();
 
   const handleImportOpml = async () => {
     try {
@@ -62,6 +59,19 @@ export function AppToolbar({ onRefresh }: AppToolbarProps) {
     }
   };
 
+  const handleRefresh = async () => {
+    try {
+      const results = await updateAllFeeds();
+      console.log('Updated feeds:', results);
+      loadFeeds();
+      if (selectedFeedId) {
+        loadNews({ feedId: selectedFeedId, limit: 100 });
+      }
+    } catch (error) {
+      console.error('Failed to update feeds:', error);
+    }
+  };
+
   return (
     <div className={styles.toolbar}>
       <Toolbar>
@@ -92,7 +102,7 @@ export function AppToolbar({ onRefresh }: AppToolbarProps) {
         <Button
           appearance="subtle"
           icon={<ArrowSyncFilled />}
-          onClick={onRefresh}
+          onClick={handleRefresh}
           title="Refresh all feeds"
         >
           Refresh
