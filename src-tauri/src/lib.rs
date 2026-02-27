@@ -13,6 +13,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             let db_state = db::init_db(&app.handle())?;
             app.manage(db_state);

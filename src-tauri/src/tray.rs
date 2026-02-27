@@ -29,8 +29,12 @@ pub fn setup_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> Result<(), Box<dyn s
     )?;
 
     // Build tray icon
+    let icon = app.default_window_icon()
+        .ok_or("No default window icon found")?
+        .clone();
+
     let _tray = TrayIconBuilder::new()
-        .icon(app.default_window_icon().unwrap().clone())
+        .icon(icon)
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id.as_ref() {

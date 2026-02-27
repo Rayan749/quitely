@@ -6,6 +6,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
 import { useFeedStore, useNewsStore } from '../../stores';
+import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 
 const useStyles = makeStyles({
   toolbar: {
@@ -66,6 +67,22 @@ export function AppToolbar() {
       loadFeeds();
       if (selectedFeedId) {
         loadNews({ feedId: selectedFeedId, limit: 100 });
+      }
+
+      // Show notification for new articles
+      const totalNew = results.reduce((sum, r) => sum + r.new_count, 0);
+      if (totalNew > 0) {
+        let permissionGranted = await isPermissionGranted();
+        if (!permissionGranted) {
+          const permission = await requestPermission();
+          permissionGranted = permission === 'granted';
+        }
+        if (permissionGranted) {
+          sendNotification({
+            title: 'Quitely RSS',
+            body: `${totalNew} new article${totalNew > 1 ? 's' : ''} found`,
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to update feeds:', error);
