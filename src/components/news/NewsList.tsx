@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles, tokens, Table, TableHeader, TableBody, TableRow, TableCell, TableCellLayout, Button, Badge } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
-import { useNewsStore } from '../../stores';
+import { useNewsStore, useUIStore } from '../../stores';
 import type { News } from '../../types';
 
 const useStyles = makeStyles({
@@ -74,13 +74,14 @@ interface NewsListProps {
 export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   const styles = useStyles();
   const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews } = useNewsStore();
+  const { selectedCategory } = useUIStore();
 
-  // Load news when feedId changes
+  // Load news when feedId changes (only if not in category mode)
   React.useEffect(() => {
-    if (feedId !== undefined) {
+    if (feedId !== undefined && !selectedCategory) {
       loadNews({ feedId, limit: 100 });
     }
-  }, [feedId, loadNews]);
+  }, [feedId, selectedCategory, loadNews]);
 
   const handleRowClick = (item: News) => {
     selectNews(item.id);
