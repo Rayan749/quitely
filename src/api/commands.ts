@@ -42,11 +42,53 @@ export async function addFeedWithFetch(url: string, parentId?: number): Promise<
   return invoke<Feed>('add_feed_with_fetch', { url, parentId });
 }
 
-// News commands (placeholder for Phase 3)
+// OPML commands
+export async function importOpml(content: string): Promise<number> {
+  return invoke<number>('import_opml', { content });
+}
+
+export async function exportOpml(): Promise<string> {
+  return invoke<string>('export_opml');
+}
+
+// News commands
 export async function getNews(filter: NewsFilter): Promise<News[]> {
   return invoke<News[]>('get_news', { filter });
 }
 
+export async function getNewsItem(id: number): Promise<News | null> {
+  return invoke<News | null>('get_news_item', { id });
+}
+
 export async function updateNews(update: NewsUpdate): Promise<void> {
   return invoke('update_news', { update });
+}
+
+export async function markAllRead(feedId?: number): Promise<void> {
+  return invoke('mark_all_read', { feedId });
+}
+
+export async function deleteNews(ids: number[]): Promise<void> {
+  return invoke('delete_news', { ids });
+}
+
+export async function restoreNews(ids: number[]): Promise<void> {
+  return invoke('restore_news', { ids });
+}
+
+// Settings commands
+export async function getSetting(key: string): Promise<string | null> {
+  return invoke<string | null>('get_setting', { key });
+}
+
+export async function setSetting(key: string, value: string): Promise<void> {
+  return invoke('set_setting', { key, value });
+}
+
+export async function deleteSetting(key: string): Promise<void> {
+  return invoke('delete_setting', { key });
+}
+
+export async function getAllSettings(): Promise<[string, string][]> {
+  return invoke<[string, string][]>('get_all_settings');
 }

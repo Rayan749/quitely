@@ -1,14 +1,24 @@
 import { Layout, AppToolbar } from './components/common';
 import { FeedTree } from './components/feeds';
-import { useFeedStore } from './stores';
+import { NewsList } from './components/news';
+import { ContentViewer } from './components/content';
+import { useFeedStore, useNewsStore } from './stores';
 import { useEffect } from 'react';
 
 function App() {
-  const { loadFeeds } = useFeedStore();
+  const { loadFeeds, selectedFeedId } = useFeedStore();
+  const { clearNews } = useNewsStore();
 
   useEffect(() => {
     loadFeeds();
   }, [loadFeeds]);
+
+  // Clear news when feed selection changes
+  useEffect(() => {
+    if (selectedFeedId === null) {
+      clearNews();
+    }
+  }, [selectedFeedId, clearNews]);
 
   const handleRefresh = () => {
     loadFeeds();
@@ -23,18 +33,14 @@ function App() {
           <FeedTree />
         </div>
 
-        {/* News List Panel - Phase 3 */}
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <div style={{ flex: '0 0 300px', borderBottom: '1px solid #e0e0e0', padding: '8px' }}>
-            <h3>News List</h3>
-            <p>Select a feed to view news</p>
-          </div>
+        {/* News List Panel */}
+        <div style={{ width: '350px', minWidth: '300px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
+          <NewsList feedId={selectedFeedId ?? undefined} />
+        </div>
 
-          {/* Content Viewer - Phase 3 */}
-          <div style={{ flex: 1, padding: '8px', overflow: 'auto' }}>
-            <h3>Content</h3>
-            <p>Select a news item to view content</p>
-          </div>
+        {/* Content Viewer */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <ContentViewer />
         </div>
       </div>
     </Layout>
