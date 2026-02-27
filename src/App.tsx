@@ -1,4 +1,5 @@
-import { Layout } from './components/common';
+import { Layout, AppToolbar } from './components/common';
+import { FeedTree } from './components/feeds';
 import { useFeedStore } from './stores';
 import { useEffect } from 'react';
 
@@ -9,13 +10,17 @@ function App() {
     loadFeeds();
   }, [loadFeeds]);
 
+  const handleRefresh = () => {
+    loadFeeds();
+  };
+
   return (
     <Layout>
+      <AppToolbar onRefresh={handleRefresh} />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Feed Tree Panel - Phase 2 */}
-        <div style={{ width: '250px', borderRight: '1px solid #e0e0e0', padding: '8px' }}>
-          <h3>Feeds</h3>
-          <p>Loading feeds...</p>
+        {/* Feed Tree Panel */}
+        <div style={{ width: '250px', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
+          <FeedTree />
         </div>
 
         {/* News List Panel - Phase 3 */}
