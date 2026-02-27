@@ -1,11 +1,11 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular } from '@fluentui/react-icons';
+import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular, TextColumnOneRegular, GridRegular } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
-import { useFeedStore, useNewsStore, useSettingsStore } from '../../stores';
+import { useFeedStore, useNewsStore, useSettingsStore, useUIStore } from '../../stores';
 import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 
 const useStyles = makeStyles({
@@ -23,6 +23,11 @@ export function AppToolbar() {
   const { loadFeeds, selectedFeedId, addFeed } = useFeedStore();
   const { loadNews } = useNewsStore();
   const { settings, updateSetting } = useSettingsStore();
+  const { contentLayout, setContentLayout } = useUIStore();
+
+  const handleLayoutToggle = () => {
+    setContentLayout(contentLayout === 'list' ? 'newspaper' : 'list');
+  };
 
   const handleThemeToggle = () => {
     const next = settings.theme === 'light' ? 'dark' : settings.theme === 'dark' ? 'system' : 'light';
@@ -151,6 +156,15 @@ export function AppToolbar() {
         </Button>
 
         <ToolbarDivider />
+
+        <Button
+          appearance="subtle"
+          icon={contentLayout === 'list' ? <TextColumnOneRegular /> : <GridRegular />}
+          onClick={handleLayoutToggle}
+          title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
+        >
+          {contentLayout === 'list' ? 'List' : 'News'}
+        </Button>
 
         <Button
           appearance="subtle"
