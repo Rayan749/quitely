@@ -22,6 +22,8 @@ pub fn run() {
             commands::update_feed,
             commands::delete_feed,
             commands::update_feed_counts,
+            commands::fetch_feed_info,
+            commands::add_feed_with_fetch,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
