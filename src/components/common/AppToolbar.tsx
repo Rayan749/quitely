@@ -1,11 +1,11 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled } from '@fluentui/react-icons';
+import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
-import { useFeedStore, useNewsStore } from '../../stores';
+import { useFeedStore, useNewsStore, useSettingsStore } from '../../stores';
 import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 
 const useStyles = makeStyles({
@@ -22,6 +22,14 @@ export function AppToolbar() {
   const styles = useStyles();
   const { loadFeeds, selectedFeedId } = useFeedStore();
   const { loadNews } = useNewsStore();
+  const { settings, updateSetting } = useSettingsStore();
+
+  const handleThemeToggle = () => {
+    const next = settings.theme === 'light' ? 'dark' : settings.theme === 'dark' ? 'system' : 'light';
+    updateSetting('theme', next);
+  };
+
+  const themeLabel = settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System';
 
   const handleImportOpml = async () => {
     try {
@@ -123,6 +131,17 @@ export function AppToolbar() {
           title="Refresh all feeds"
         >
           Refresh
+        </Button>
+
+        <ToolbarDivider />
+
+        <Button
+          appearance="subtle"
+          icon={settings.theme === 'dark' ? <WeatherMoonRegular /> : <WeatherSunnyRegular />}
+          onClick={handleThemeToggle}
+          title={`Theme: ${themeLabel}`}
+        >
+          {themeLabel}
         </Button>
 
         <ToolbarDivider />

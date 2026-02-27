@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   FluentProvider,
   webLightTheme,
@@ -6,6 +6,7 @@ import {
   makeStyles,
 } from '@fluentui/react-components';
 import { Sidebar } from './Sidebar';
+import { useSettingsStore } from '../../stores';
 
 const useStyles = makeStyles({
   root: {
@@ -28,10 +29,26 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const styles = useStyles();
-  const [isDarkMode] = useState(false);
+  const { settings } = useSettingsStore();
+  const [systemDark, setSystemDark] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const isDark = useMemo(() => {
+    if (settings.theme === 'dark') return true;
+    if (settings.theme === 'light') return false;
+    return systemDark;
+  }, [settings.theme, systemDark]);
 
   return (
-    <FluentProvider theme={isDarkMode ? webDarkTheme : webLightTheme}>
+    <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
       <div className={styles.root}>
         <Sidebar />
         <div className={styles.main}>
