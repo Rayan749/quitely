@@ -1,8 +1,19 @@
 use tauri::{
+    image::Image,
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Emitter, Manager, Runtime,
 };
+
+/// Load the tray icon from embedded bytes
+fn load_tray_icon() -> Image<'static> {
+    let icon_bytes = include_bytes!("../icons/icon.png");
+    let img = image::load_from_memory(icon_bytes)
+        .expect("Failed to load tray icon from memory");
+    let rgba = img.to_rgba8();
+    let (width, height) = rgba.dimensions();
+    Image::new_owned(rgba.into_raw(), width, height)
+}
 
 pub fn setup_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> Result<(), Box<dyn std::error::Error>> {
     // Create menu items
@@ -28,10 +39,11 @@ pub fn setup_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> Result<(), Box<dyn s
         ],
     )?;
 
-    // Build tray icon
-    let icon = app.default_window_icon()
-        .ok_or("No default window icon found")?
-        .clone();
+    // Build tray icon - use default icon or fall back to embedded icon
+    let icon = match app.default_window_icon() {
+        Some(icon) => icon.clone(),
+        None => load_tray_icon(),
+    };
 
     let _tray = TrayIconBuilder::new()
         .icon(icon)
