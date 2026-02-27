@@ -3,6 +3,7 @@ mod db;
 mod feed;
 mod models;
 mod tray;
+mod worker;
 
 use tauri::Manager;
 
@@ -18,6 +19,10 @@ pub fn run() {
 
             // Setup system tray
             tray::setup_tray(app.handle())?;
+
+            // Setup feed update scheduler
+            let scheduler = worker::FeedScheduler::new(30); // 30 minutes
+            scheduler.start(app.handle().clone());
 
             Ok(())
         })

@@ -25,6 +25,14 @@ export function useTrayEvents() {
       unlisteners.push(unlisten);
     });
 
+    // Listen for scheduler update-feeds event
+    listen('scheduler:update-feeds', async () => {
+      console.log('Auto-updating feeds from scheduler...');
+      await loadFeeds();
+    }).then(unlisten => {
+      unlisteners.push(unlisten);
+    });
+
     return () => {
       unlisteners.forEach(unlisten => unlisten());
     };
