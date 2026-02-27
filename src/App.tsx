@@ -3,7 +3,7 @@ import { FeedTree } from './components/feeds';
 import { NewsList } from './components/news';
 import { ContentViewer } from './components/content';
 import { useFeedStore, useNewsStore } from './stores';
-import { useKeyboardShortcuts } from './hooks';
+import { useKeyboardShortcuts, useTrayEvents } from './hooks';
 import { useEffect } from 'react';
 
 function App() {
@@ -12,6 +12,9 @@ function App() {
 
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
+
+  // Initialize tray event listeners
+  useTrayEvents();
 
   useEffect(() => {
     loadFeeds();
