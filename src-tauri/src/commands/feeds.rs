@@ -161,10 +161,28 @@ pub async fn update_feed_articles(
     };
 
     let fetcher = FeedFetcher::new();
-    let parsed = fetcher.fetch_and_parse(&feed_url).await?;
+    let parsed = match fetcher.fetch_and_parse(&feed_url).await {
+        Ok(p) => p,
+        Err(e) => {
+            // Update feed status to error
+            let conn = db.0.lock().map_err(|e| e.to_string())?;
+            let _ = conn.execute(
+                "UPDATE feeds SET status = 'error', error_message = ?1 WHERE id = ?2",
+                rusqlite::params![e, feed_id],
+            );
+            return Err(e);
+        }
+    };
 
     // Re-acquire lock to insert articles
     let conn = db.0.lock().map_err(|e| e.to_string())?;
+
+    // Reset status to ok on successful fetch
+    let _ = conn.execute(
+        "UPDATE feeds SET status = 'ok', error_message = NULL WHERE id = ?1",
+        rusqlite::params![feed_id],
+    );
+
     let mut new_count = 0;
 
     for entry in &parsed.entries {
@@ -247,6 +265,13 @@ pub async fn update_all_feeds(db: State<'_, DbState>) -> Result<Vec<UpdateFeedRe
         match fetcher.fetch_and_parse(&feed.xml_url).await {
             Ok(parsed) => {
                 let conn = db.0.lock().map_err(|e| e.to_string())?;
+
+                // Reset status to ok
+                let _ = conn.execute(
+                    "UPDATE feeds SET status = 'ok', error_message = NULL WHERE id = ?1",
+                    rusqlite::params![feed.id],
+                );
+
                 let mut new_count = 0;
 
                 for entry in &parsed.entries {
@@ -308,6 +333,13 @@ pub async fn update_all_feeds(db: State<'_, DbState>) -> Result<Vec<UpdateFeedRe
                 });
             }
             Err(e) => {
+                // Update feed status to error
+                if let Ok(conn) = db.0.lock() {
+                    let _ = conn.execute(
+                        "UPDATE feeds SET status = 'error', error_message = ?1 WHERE id = ?2",
+                        rusqlite::params![e.to_string(), feed.id],
+                    );
+                }
                 eprintln!("Failed to update feed {}: {}", feed.id, e);
             }
         }
