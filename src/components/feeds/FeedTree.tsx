@@ -1,5 +1,5 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
-import { FolderFilled, DocumentTextFilled } from '@fluentui/react-icons';
+import { makeStyles, tokens, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, Input } from '@fluentui/react-components';
+import { FolderFilled, DocumentTextFilled, EditRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useFeedStore } from '../../stores';
 import type { Feed } from '../../types';
 import React from 'react';
@@ -61,26 +61,80 @@ interface FeedItemProps {
   selectedFeedId: number | null;
   onSelect: (id: number) => void;
   level?: number;
+  renamingId: number | null;
+  renameValue: string;
+  setRenamingId: (id: number | null) => void;
+  setRenameValue: (value: string) => void;
+  onRename: (id: number, newTitle: string) => void;
+  onDelete: (id: number) => void;
 }
 
-function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0 }: FeedItemProps): React.ReactElement {
+function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
+                    renamingId, renameValue, setRenamingId, setRenameValue,
+                    onRename, onDelete }: FeedItemProps): React.ReactElement {
   const children = tree.get(feed.id) || [];
   const hasChildren = children.length > 0;
   const isSelected = selectedFeedId === feed.id;
+  const isRenaming = renamingId === feed.id;
+
+  const handleRenameSubmit = () => {
+    if (renameValue.trim()) {
+      onRename(feed.id, renameValue.trim());
+    }
+    setRenamingId(null);
+  };
 
   return (
     <div>
-      <div
-        className={`${styles.feedItem} ${isSelected ? styles.selected : ''}`}
-        style={{ paddingLeft: `${8 + level * 16}px` }}
-        onClick={() => onSelect(feed.id)}
-      >
-        {hasChildren ? <FolderFilled /> : <DocumentTextFilled />}
-        <span>{feed.text || feed.title}</span>
-        {feed.unreadCount > 0 && (
-          <span className={styles.unreadBadge}>{feed.unreadCount}</span>
-        )}
-      </div>
+      <Menu>
+        <MenuTrigger>
+          <div
+            className={`${styles.feedItem} ${isSelected ? styles.selected : ''}`}
+            style={{ paddingLeft: `${8 + level * 16}px` }}
+            onClick={() => onSelect(feed.id)}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            {hasChildren || !feed.xmlUrl ? <FolderFilled /> : <DocumentTextFilled />}
+            {isRenaming ? (
+              <Input
+                size="small"
+                value={renameValue}
+                onChange={(_, data) => setRenameValue(data.value)}
+                onBlur={handleRenameSubmit}
+                onKeyDown={(e) => e.key === 'Enter' && handleRenameSubmit()}
+                autoFocus
+              />
+            ) : (
+              <span>{feed.text || feed.title}</span>
+            )}
+            {!isRenaming && feed.unreadCount > 0 && (
+              <span className={styles.unreadBadge}>{feed.unreadCount}</span>
+            )}
+            {feed.status === 'error' && (
+              <span title={feed.errorMessage || 'Error'} style={{ color: '#d13438', fontSize: '12px' }}>⚠</span>
+            )}
+          </div>
+        </MenuTrigger>
+        <MenuPopover>
+          <MenuList>
+            <MenuItem
+              icon={<EditRegular />}
+              onClick={() => {
+                setRenamingId(feed.id);
+                setRenameValue(feed.text || feed.title);
+              }}
+            >
+              Rename
+            </MenuItem>
+            <MenuItem
+              icon={<DeleteRegular />}
+              onClick={() => onDelete(feed.id)}
+            >
+              Delete
+            </MenuItem>
+          </MenuList>
+        </MenuPopover>
+      </Menu>
       {hasChildren && (
         <div className={styles.childContainer}>
           {children.map(child => (
@@ -92,6 +146,12 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0 }: F
               selectedFeedId={selectedFeedId}
               onSelect={onSelect}
               level={level + 1}
+              renamingId={renamingId}
+              renameValue={renameValue}
+              setRenamingId={setRenamingId}
+              setRenameValue={setRenameValue}
+              onRename={onRename}
+              onDelete={onDelete}
             />
           ))}
         </div>
@@ -102,9 +162,20 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0 }: F
 
 export function FeedTree() {
   const styles = useStyles();
-  const { feeds, selectedFeedId, selectFeed } = useFeedStore();
+  const { feeds, selectedFeedId, selectFeed, updateFeed, deleteFeed: removeFeed } = useFeedStore();
+  const [renamingId, setRenamingId] = React.useState<number | null>(null);
+  const [renameValue, setRenameValue] = React.useState('');
+
   const tree = buildFeedTree(feeds);
   const rootFeeds = tree.get(0) || [];
+
+  const handleRename = async (id: number, newTitle: string) => {
+    await updateFeed({ id, title: newTitle });
+  };
+
+  const handleDelete = async (id: number) => {
+    await removeFeed(id);
+  };
 
   return (
     <div className={styles.container}>
@@ -116,6 +187,12 @@ export function FeedTree() {
           styles={styles}
           selectedFeedId={selectedFeedId}
           onSelect={selectFeed}
+          renamingId={renamingId}
+          renameValue={renameValue}
+          setRenamingId={setRenamingId}
+          setRenameValue={setRenameValue}
+          onRename={handleRename}
+          onDelete={handleDelete}
         />
       ))}
       {feeds.length === 0 && (

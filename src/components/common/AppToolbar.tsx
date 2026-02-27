@@ -1,5 +1,5 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular } from '@fluentui/react-icons';
+import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 
 export function AppToolbar() {
   const styles = useStyles();
-  const { loadFeeds, selectedFeedId } = useFeedStore();
+  const { loadFeeds, selectedFeedId, addFeed } = useFeedStore();
   const { loadNews } = useNewsStore();
   const { settings, updateSetting } = useSettingsStore();
 
@@ -30,6 +30,14 @@ export function AppToolbar() {
   };
 
   const themeLabel = settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System';
+
+  const handleNewFolder = async () => {
+    try {
+      await addFeed({ xmlUrl: '', title: 'New Folder' });
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+    }
+  };
 
   const handleImportOpml = async () => {
     try {
@@ -101,6 +109,15 @@ export function AppToolbar() {
     <div className={styles.toolbar}>
       <Toolbar>
         <AddFeedDialog />
+
+        <Button
+          appearance="subtle"
+          icon={<FolderAddRegular />}
+          onClick={handleNewFolder}
+          title="New folder"
+        >
+          Folder
+        </Button>
 
         <ToolbarDivider />
 
