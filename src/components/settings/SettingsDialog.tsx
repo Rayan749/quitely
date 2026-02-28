@@ -211,6 +211,19 @@ export function SettingsDialog() {
                           onChange={(_, data) => updateSetting('concurrentRequests', parseInt(String(data.value), 10) || 5)}
                         />
                       </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Proxy URL</span>
+                          <span className={styles.settingDescription}>HTTP/HTTPS/SOCKS5 proxy (e.g., socks5://127.0.0.1:1080)</span>
+                        </div>
+                        <Input
+                          size="small"
+                          value={settings.proxyUrl}
+                          placeholder="Leave empty for direct connection"
+                          onChange={(_, data) => updateSetting('proxyUrl', data.value)}
+                          style={{ width: '250px' }}
+                        />
+                      </div>
                     </div>
                   )}
 

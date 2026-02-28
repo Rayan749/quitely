@@ -106,6 +106,10 @@ export async function getAllSettings(): Promise<[string, string][]> {
   return invoke<[string, string][]>('get_all_settings');
 }
 
+export async function testProxy(proxyUrl: string): Promise<string> {
+  return invoke<string>('test_proxy', { proxyUrl });
+}
+
 // Label commands
 export async function getLabels(): Promise<Label[]> {
   return invoke<Label[]>('get_labels');

@@ -15,6 +15,7 @@ interface AppSettings {
   // Network
   requestTimeout: number;
   concurrentRequests: number;
+  proxyUrl: string;
 
   // Feed
   updateOnStartup: boolean;
@@ -53,6 +54,7 @@ const defaultSettings: AppSettings = {
   closeToTray: true,
   requestTimeout: 30,
   concurrentRequests: 5,
+  proxyUrl: '',
   updateOnStartup: true,
   autoUpdateInterval: 30,
   markReadOnSelect: true,
@@ -74,6 +76,7 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   closeToTray: 'tray.close_to_tray',
   requestTimeout: 'network.request_timeout',
   concurrentRequests: 'network.concurrent_requests',
+  proxyUrl: 'network.proxy_url',
   updateOnStartup: 'feed.update_on_startup',
   autoUpdateInterval: 'feed.auto_update_interval',
   markReadOnSelect: 'feed.mark_read_on_select',

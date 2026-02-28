@@ -41,6 +41,17 @@ impl FeedFetcher {
         }
     }
 
+    pub fn with_proxy(proxy_url: &str) -> Result<Self, String> {
+        let proxy = reqwest::Proxy::all(proxy_url).map_err(|e| e.to_string())?;
+        let client = Client::builder()
+            .timeout(std::time::Duration::from_secs(30))
+            .user_agent("QuitelyRSS/0.1.0")
+            .proxy(proxy)
+            .build()
+            .map_err(|e| e.to_string())?;
+        Ok(Self { client })
+    }
+
     pub async fn fetch_and_parse(&self, url: &str) -> Result<ParsedFeed, String> {
         let response = self.client
             .get(url)

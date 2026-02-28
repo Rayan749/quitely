@@ -62,6 +62,7 @@ pub fn run() {
             commands::set_setting,
             commands::delete_setting,
             commands::get_all_settings,
+            commands::test_proxy,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
