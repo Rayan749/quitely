@@ -1,5 +1,6 @@
 import { makeStyles, tokens, Button, Link, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, Badge } from '@fluentui/react-components';
 import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular, TagRegular } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useNewsStore, useLabelsStore, useSettingsStore } from '../../stores';
 import DOMPurify from 'dompurify';
 
@@ -99,6 +100,7 @@ export function ContentViewer() {
   const { news, selectedNewsId, markStarred, deleteNews, loadNews, filter } = useNewsStore();
   const { labels, setArticleLabels } = useLabelsStore();
   const { settings } = useSettingsStore();
+  const { t } = useTranslation();
 
   const selectedNews = news.find(n => n.id === selectedNewsId);
 
@@ -151,7 +153,7 @@ export function ContentViewer() {
       <div className={styles.container}>
         <div className={styles.empty}>
           <GlobeRegular style={{ fontSize: '48px', marginBottom: '16px' }} />
-          <p>Select an article to read</p>
+          <p>{t('contentViewer.selectArticle')}</p>
         </div>
       </div>
     );
@@ -168,7 +170,7 @@ export function ContentViewer() {
             onClick={handleStarClick}
             title={selectedNews.isStarred ? 'Unstar' : 'Star'}
           >
-            {selectedNews.isStarred ? 'Starred' : 'Star'}
+            {selectedNews.isStarred ? t('contentViewer.starred') : t('contentViewer.star')}
           </Button>
           <Button
             appearance="subtle"
@@ -176,7 +178,7 @@ export function ContentViewer() {
             onClick={handleDeleteClick}
             title="Delete"
           >
-            Delete
+            {t('contentViewer.delete')}
           </Button>
           {selectedNews.link && (
             <Button
@@ -185,7 +187,7 @@ export function ContentViewer() {
               onClick={handleOpenExternal}
               title="Open in browser"
             >
-              Open
+              {t('contentViewer.open')}
             </Button>
           )}
           {labels.length > 0 && (
@@ -196,7 +198,7 @@ export function ContentViewer() {
                   icon={<TagRegular />}
                   title="Labels"
                 >
-                  Labels
+                  {t('contentViewer.labels')}
                 </Button>
               </MenuTrigger>
               <MenuPopover>

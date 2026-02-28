@@ -1,5 +1,6 @@
 import { makeStyles, tokens, mergeClasses, Badge } from '@fluentui/react-components';
 import { MailUnreadFilled, StarFilled, DeleteFilled } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useUIStore, useLabelsStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -46,6 +47,7 @@ export function Sidebar() {
   const styles = useStyles();
   const { categoriesPanelVisible, selectedCategory, selectCategory, selectedLabelId, selectLabel } = useUIStore();
   const { labels } = useLabelsStore();
+  const { t } = useTranslation();
 
   if (!categoriesPanelVisible) {
     return null;
@@ -58,30 +60,30 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.categoriesPanel}>
-        <div className={styles.sectionTitle}>Categories</div>
+        <div className={styles.sectionTitle}>{t('sidebar.categories')}</div>
         <div
           className={mergeClasses(styles.categoryItem, selectedCategory === 'unread' ? styles.selected : '')}
           onClick={() => handleCategoryClick('unread')}
         >
           <MailUnreadFilled />
-          <span>Unread</span>
+          <span>{t('sidebar.unread')}</span>
         </div>
         <div
           className={mergeClasses(styles.categoryItem, selectedCategory === 'starred' ? styles.selected : '')}
           onClick={() => handleCategoryClick('starred')}
         >
           <StarFilled />
-          <span>Starred</span>
+          <span>{t('sidebar.starred')}</span>
         </div>
         <div
           className={mergeClasses(styles.categoryItem, selectedCategory === 'deleted' ? styles.selected : '')}
           onClick={() => handleCategoryClick('deleted')}
         >
           <DeleteFilled />
-          <span>Deleted</span>
+          <span>{t('sidebar.deleted')}</span>
         </div>
 
-        <div className={styles.sectionTitle}>Labels</div>
+        <div className={styles.sectionTitle}>{t('sidebar.labels')}</div>
         {labels.map(label => (
           <div
             key={label.id}
@@ -100,7 +102,7 @@ export function Sidebar() {
         ))}
         {labels.length === 0 && (
           <div style={{ padding: '4px 12px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-            No labels yet
+            {t('sidebar.noLabels')}
           </div>
         )}
       </div>

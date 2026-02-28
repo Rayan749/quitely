@@ -1,6 +1,7 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider, SearchBox } from '@fluentui/react-components';
 import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular, TextColumnOneRegular, GridRegular } from '@fluentui/react-icons';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -25,6 +26,7 @@ export function AppToolbar() {
   const { loadNews, searchNews: doSearch, clearSearch } = useNewsStore();
   const { settings, updateSetting } = useSettingsStore();
   const { contentLayout, setContentLayout } = useUIStore();
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = React.useState('');
   const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -142,7 +144,7 @@ export function AppToolbar() {
           onClick={handleNewFolder}
           title="New folder"
         >
-          Folder
+          {t('toolbar.folder')}
         </Button>
 
         <ToolbarDivider />
@@ -153,7 +155,7 @@ export function AppToolbar() {
           onClick={handleImportOpml}
           title="Import OPML"
         >
-          Import
+          {t('toolbar.import')}
         </Button>
 
         <Button
@@ -162,7 +164,7 @@ export function AppToolbar() {
           onClick={handleExportOpml}
           title="Export OPML"
         >
-          Export
+          {t('toolbar.export')}
         </Button>
 
         <ToolbarDivider />
@@ -173,14 +175,14 @@ export function AppToolbar() {
           onClick={handleRefresh}
           title="Refresh all feeds"
         >
-          Refresh
+          {t('toolbar.refresh')}
         </Button>
 
         <ToolbarDivider />
 
         <SearchBox
           size="small"
-          placeholder="Search articles..."
+          placeholder={t('toolbar.search')}
           value={searchValue}
           onChange={(_, data) => handleSearchChange(data.value)}
           dismiss={searchValue ? {
@@ -203,7 +205,7 @@ export function AppToolbar() {
           onClick={handleLayoutToggle}
           title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
         >
-          {contentLayout === 'list' ? 'List' : 'News'}
+          {contentLayout === 'list' ? t('toolbar.list') : t('toolbar.newspaper')}
         </Button>
 
         <Button
