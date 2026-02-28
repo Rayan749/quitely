@@ -553,6 +553,23 @@ export function SettingsPage() {
 
               {selectedTab === 'appearance' && (
                 <div className={styles.section}>
+                  <div className={styles.sectionTitle}>Appearance</div>
+                  <div className={styles.settingRow}>
+                    <div className={styles.settingLabel}>
+                      <span>Theme</span>
+                      <span className={styles.settingDescription}>Application theme</span>
+                    </div>
+                    <Dropdown
+                      size="small"
+                      value={settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System'}
+                      onOptionSelect={(_, data) => updateSetting('theme', (data.optionValue || 'system') as 'light' | 'dark' | 'system')}
+                    >
+                      <Option value="system">System</Option>
+                      <Option value="light">Light</Option>
+                      <Option value="dark">Dark</Option>
+                    </Dropdown>
+                  </div>
+
                   <div className={styles.sectionTitle}>Font Settings</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
