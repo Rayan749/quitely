@@ -184,6 +184,7 @@ pub async fn update_feed_articles(
     );
 
     let mut new_count = 0;
+    let mut new_article_ids: Vec<i64> = Vec::new();
 
     for entry in &parsed.entries {
         // Check if article already exists by guid or link
@@ -226,10 +227,16 @@ pub async fn update_feed_articles(
                 enclosure_type: entry.enclosure_type.clone(),
             };
 
-            if crate::db::news::create(&conn, &news).is_ok() {
+            if let Ok(article_id) = crate::db::news::create(&conn, &news) {
                 new_count += 1;
+                new_article_ids.push(article_id);
             }
         }
+    }
+
+    // Execute filters on new articles
+    if !new_article_ids.is_empty() {
+        let _ = crate::db::filters::execute_filters(&conn, &new_article_ids);
     }
 
     // Update feed's last_updated time
@@ -273,6 +280,7 @@ pub async fn update_all_feeds(db: State<'_, DbState>) -> Result<Vec<UpdateFeedRe
                 );
 
                 let mut new_count = 0;
+                let mut new_article_ids: Vec<i64> = Vec::new();
 
                 for entry in &parsed.entries {
                     let exists = if let Some(ref guid) = entry.guid {
@@ -314,10 +322,16 @@ pub async fn update_all_feeds(db: State<'_, DbState>) -> Result<Vec<UpdateFeedRe
                             enclosure_type: entry.enclosure_type.clone(),
                         };
 
-                        if crate::db::news::create(&conn, &news).is_ok() {
+                        if let Ok(article_id) = crate::db::news::create(&conn, &news) {
                             new_count += 1;
+                            new_article_ids.push(article_id);
                         }
                     }
+                }
+
+                // Execute filters on new articles
+                if !new_article_ids.is_empty() {
+                    let _ = crate::db::filters::execute_filters(&conn, &new_article_ids);
                 }
 
                 let now = chrono::Utc::now().to_rfc3339();
