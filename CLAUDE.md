@@ -38,7 +38,34 @@ cd src-tauri && cargo check
 
 **Backend (`src-tauri/`):** Rust application using Tauri v2. The entry point is `main.rs`, which delegates to `lib.rs` for the Tauri builder setup.
 
+### Frontend Structure
+
+```
+src/
+├── components/           # React components
+│   ├── common/          # Layout, AppToolbar, Sidebar
+│   ├── content/         # ContentViewer
+│   ├── feeds/           # AddFeedDialog, FeedTree
+│   ├── news/            # NewsList, NewspaperView
+│   └── settings/        # SettingsPage, LabelDialog
+├── stores/              # Zustand stores (feed, news, settings, ui, labels, filters)
+├── hooks/               # useKeyboardShortcuts, useTrayEvents
+├── types/               # TypeScript types (feed, news, label, filter)
+├── locales/             # i18n translations (en.json, zh.json)
+├── i18n.ts              # i18n configuration
+├── utils/               # Utilities (i18nDate.ts)
+└── api/                 # Tauri invoke wrappers (commands.ts)
+```
+
 **Frontend-Rust Communication:** Use `invoke()` from `@tauri-apps/api/core` to call Rust commands. Define commands in `src-tauri/src/commands/` with `#[tauri::command]` and register them in `lib.rs` `generate_handler![]`.
+
+### Settings
+
+Settings are in a sidebar page (`SettingsPage`), not a dialog. Use `settingsStore` for state management.
+
+### Internationalization (i18n)
+
+Uses `react-i18next` for translations. Translation files in `src/locales/` (en.json, zh.json). Use `useTranslation` hook or `i18n.t()` function. Date formatting via `src/utils/i18nDate.ts`.
 
 ### Backend Structure
 
