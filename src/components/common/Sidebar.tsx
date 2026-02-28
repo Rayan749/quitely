@@ -176,7 +176,7 @@ export function Sidebar() {
   };
 
   return (
-    <nav className={styles.root} style={{ width: '260px', minWidth: '200px' }}>
+    <nav className={styles.root} style={{ width: '20%', minWidth: '180px', maxWidth: '300px' }}>
       <div className={styles.content}>
         {/* Categories Section */}
         <div className={styles.section}>

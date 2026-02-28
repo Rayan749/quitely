@@ -83,7 +83,7 @@ function App() {
               <NewspaperView />
             ) : (
               <>
-                <div style={{ width: '350px', minWidth: '300px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ width: '25%', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
                   <NewsList feedId={selectedFeedId ?? undefined} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
