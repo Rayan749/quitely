@@ -1,6 +1,6 @@
-import { makeStyles, tokens, Button, Link } from '@fluentui/react-components';
-import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
-import { useNewsStore } from '../../stores';
+import { makeStyles, tokens, Button, Link, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, Badge } from '@fluentui/react-components';
+import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular, TagRegular } from '@fluentui/react-icons';
+import { useNewsStore, useLabelsStore } from '../../stores';
 import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({
@@ -96,9 +96,20 @@ const useStyles = makeStyles({
 
 export function ContentViewer() {
   const styles = useStyles();
-  const { news, selectedNewsId, markStarred, deleteNews } = useNewsStore();
+  const { news, selectedNewsId, markStarred, deleteNews, loadNews, filter } = useNewsStore();
+  const { labels, setArticleLabels } = useLabelsStore();
 
   const selectedNews = news.find(n => n.id === selectedNewsId);
+
+  const handleLabelToggle = async (labelId: number) => {
+    if (!selectedNews) return;
+    const currentLabels = selectedNews.labels;
+    const newLabels = currentLabels.includes(labelId)
+      ? currentLabels.filter(l => l !== labelId)
+      : [...currentLabels, labelId];
+    await setArticleLabels([selectedNews.id], newLabels);
+    loadNews(filter);
+  };
 
   const handleStarClick = () => {
     if (selectedNews) {
@@ -176,6 +187,41 @@ export function ContentViewer() {
               Open
             </Button>
           )}
+          {labels.length > 0 && (
+            <Menu>
+              <MenuTrigger disableButtonEnhancement>
+                <Button
+                  appearance="subtle"
+                  icon={<TagRegular />}
+                  title="Labels"
+                >
+                  Labels
+                </Button>
+              </MenuTrigger>
+              <MenuPopover>
+                <MenuList>
+                  {labels.map(label => (
+                    <MenuItem
+                      key={label.id}
+                      onClick={() => handleLabelToggle(label.id)}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Badge
+                          size="tiny"
+                          appearance="filled"
+                          style={{ backgroundColor: label.color || '#0078d4' }}
+                        >
+                          &nbsp;
+                        </Badge>
+                        {label.name}
+                        {selectedNews?.labels.includes(label.id) ? ' \u2713' : ''}
+                      </span>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </MenuPopover>
+            </Menu>
+          )}
         </div>
       </div>
 
@@ -201,6 +247,24 @@ export function ContentViewer() {
           </Link>
         )}
       </div>
+
+      {selectedNews.labels.length > 0 && (
+        <div style={{ display: 'flex', gap: '4px', padding: '4px 16px' }}>
+          {selectedNews.labels.map(labelId => {
+            const label = labels.find(l => l.id === labelId);
+            return label ? (
+              <Badge
+                key={labelId}
+                size="small"
+                appearance="filled"
+                style={{ backgroundColor: label.color || '#0078d4' }}
+              >
+                {label.name}
+              </Badge>
+            ) : null;
+          })}
+        </div>
+      )}
 
       <div className={styles.content}>
         <div
