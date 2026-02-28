@@ -14,6 +14,7 @@ import {
 import { AddRegular, DeleteRegular, ArrowLeftRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore, useLabelsStore, useFiltersStore, useUIStore } from '../../stores';
+import { LabelDialog } from './LabelDialog';
 
 const useStyles = makeStyles({
   container: {
@@ -93,12 +94,10 @@ export function SettingsPage() {
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = React.useState('general');
   const { settings, loading, loadSettings, updateSetting } = useSettingsStore();
-  const { labels, loadLabels, addLabel, removeLabel } = useLabelsStore();
+  const { labels, loadLabels, removeLabel } = useLabelsStore();
   const { filters, loadFilters, addFilter, removeFilter, toggleFilter } = useFiltersStore();
   const { settingsPageOpen, setSettingsPageOpen } = useUIStore();
   const { i18n } = useTranslation();
-  const [newLabelName, setNewLabelName] = React.useState('');
-  const [newLabelColor, setNewLabelColor] = React.useState('#0078d4');
   const [filterName, setFilterName] = React.useState('');
   const [filterField, setFilterField] = React.useState('title');
   const [filterOperator, setFilterOperator] = React.useState('contains');
@@ -381,34 +380,9 @@ export function SettingsPage() {
 
               {selectedTab === 'labels' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Manage Labels</div>
-
-                  {/* Add new label */}
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px' }}>
-                    <Input
-                      size="small"
-                      placeholder="Label name"
-                      value={newLabelName}
-                      onChange={(_, data) => setNewLabelName(data.value)}
-                    />
-                    <input
-                      type="color"
-                      value={newLabelColor}
-                      onChange={(e) => setNewLabelColor(e.target.value)}
-                      style={{ width: '32px', height: '32px', border: 'none', cursor: 'pointer' }}
-                    />
-                    <Button
-                      size="small"
-                      icon={<AddRegular />}
-                      onClick={async () => {
-                        if (newLabelName.trim()) {
-                          await addLabel({ name: newLabelName.trim(), color: newLabelColor });
-                          setNewLabelName('');
-                        }
-                      }}
-                    >
-                      Add
-                    </Button>
+                  <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Manage Labels</span>
+                    <LabelDialog />
                   </div>
 
                   {/* Label list */}

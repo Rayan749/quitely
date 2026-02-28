@@ -2,6 +2,7 @@ import { makeStyles, tokens, Divider, Button } from '@fluentui/react-components'
 import { MailUnreadFilled, StarFilled, DeleteFilled, SettingsRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useUIStore, useLabelsStore, useFeedStore } from '../../stores';
+import { LabelDialog } from '../settings';
 import type { Feed } from '../../types';
 import React, { useMemo } from 'react';
 
@@ -234,8 +235,9 @@ export function Sidebar() {
 
         {/* Labels Section */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>
-            {t('sidebar.labels', '标签')}
+          <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '8px' }}>
+            <span>{t('sidebar.labels', '标签')}</span>
+            <LabelDialog />
           </div>
           {labels.map((label) => (
             <div
