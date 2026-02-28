@@ -2,6 +2,7 @@ import { makeStyles, tokens, Button } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, OpenRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getDateLocale } from '../../utils/i18nDate';
+import { useNewsStore } from '../../stores';
 import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({

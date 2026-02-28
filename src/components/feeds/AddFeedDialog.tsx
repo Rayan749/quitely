@@ -45,7 +45,6 @@ export function AddFeedDialog() {
   const styles = useStyles();
   const { t } = useTranslation();
   const { addFeed } = useFeedStore();
-  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);

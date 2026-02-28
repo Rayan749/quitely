@@ -3,6 +3,7 @@ import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular, TagR
 import { useTranslation } from 'react-i18next';
 import { useNewsStore, useLabelsStore, useSettingsStore } from '../../stores';
 import { getDateLocale } from '../../utils/i18nDate';
+import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({
   container: {
