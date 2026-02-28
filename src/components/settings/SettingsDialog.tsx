@@ -16,9 +16,11 @@ import {
   SpinButton,
   Input,
   Badge,
+  Dropdown,
+  Option,
 } from '@fluentui/react-components';
 import { SettingsRegular, AddRegular, DeleteRegular } from '@fluentui/react-icons';
-import { useSettingsStore, useLabelsStore } from '../../stores';
+import { useSettingsStore, useLabelsStore, useFiltersStore } from '../../stores';
 
 const useStyles = makeStyles({
   container: {
@@ -62,15 +64,22 @@ export function SettingsDialog() {
   const [selectedTab, setSelectedTab] = React.useState('general');
   const { settings, loading, loadSettings, updateSetting } = useSettingsStore();
   const { labels, loadLabels, addLabel, removeLabel } = useLabelsStore();
+  const { filters, loadFilters, addFilter, removeFilter, toggleFilter } = useFiltersStore();
   const [newLabelName, setNewLabelName] = React.useState('');
   const [newLabelColor, setNewLabelColor] = React.useState('#0078d4');
+  const [filterName, setFilterName] = React.useState('');
+  const [filterField, setFilterField] = React.useState('title');
+  const [filterOperator, setFilterOperator] = React.useState('contains');
+  const [filterValue, setFilterValue] = React.useState('');
+  const [filterAction, setFilterAction] = React.useState('mark_read');
 
   React.useEffect(() => {
     if (open) {
       loadSettings();
       loadLabels();
+      loadFilters();
     }
-  }, [open, loadSettings, loadLabels]);
+  }, [open, loadSettings, loadLabels, loadFilters]);
 
   const handleToggle = (key: keyof typeof settings) => {
     updateSetting(key, !settings[key]);
@@ -112,6 +121,9 @@ export function SettingsDialog() {
                   </Tab>
                   <Tab value="labels" id="labels">
                     Labels
+                  </Tab>
+                  <Tab value="filters" id="filters">
+                    Filters
                   </Tab>
                 </TabList>
 
@@ -351,6 +363,116 @@ export function SettingsDialog() {
                       {labels.length === 0 && (
                         <div style={{ color: tokens.colorNeutralForeground3, fontSize: '13px' }}>
                           No labels created yet
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {selectedTab === 'filters' && (
+                    <div className={styles.section}>
+                      <div className={styles.sectionTitle}>Create Filter</div>
+
+                      <Input
+                        size="small"
+                        placeholder="Filter name"
+                        value={filterName}
+                        onChange={(_, data) => setFilterName(data.value)}
+                      />
+
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '13px' }}>When</span>
+                        <Dropdown
+                          size="small"
+                          value={filterField}
+                          onOptionSelect={(_, data) => setFilterField(data.optionValue || 'title')}
+                        >
+                          <Option value="title">Title</Option>
+                          <Option value="author">Author</Option>
+                          <Option value="category">Category</Option>
+                          <Option value="content">Content</Option>
+                        </Dropdown>
+                        <Dropdown
+                          size="small"
+                          value={filterOperator}
+                          onOptionSelect={(_, data) => setFilterOperator(data.optionValue || 'contains')}
+                        >
+                          <Option value="contains">contains</Option>
+                          <Option value="not_contains">does not contain</Option>
+                          <Option value="equals">equals</Option>
+                          <Option value="starts_with">starts with</Option>
+                          <Option value="regex">matches regex</Option>
+                        </Dropdown>
+                        <Input
+                          size="small"
+                          placeholder="Value"
+                          value={filterValue}
+                          onChange={(_, data) => setFilterValue(data.value)}
+                          style={{ flex: 1, minWidth: '120px' }}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px' }}>Then</span>
+                        <Dropdown
+                          size="small"
+                          value={filterAction}
+                          onOptionSelect={(_, data) => setFilterAction(data.optionValue || 'mark_read')}
+                        >
+                          <Option value="mark_read">Mark as read</Option>
+                          <Option value="mark_starred">Star</Option>
+                          <Option value="delete">Delete</Option>
+                        </Dropdown>
+                        <Button
+                          size="small"
+                          icon={<AddRegular />}
+                          onClick={async () => {
+                            if (filterName.trim() && filterValue.trim()) {
+                              await addFilter({
+                                name: filterName.trim(),
+                                feedIds: [],
+                                matchType: 'any',
+                                conditions: [{ field: filterField, operator: filterOperator, value: filterValue }],
+                                actions: [{ action: filterAction }],
+                              });
+                              setFilterName('');
+                              setFilterValue('');
+                            }
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+
+                      <div className={styles.sectionTitle} style={{ marginTop: '16px' }}>Active Filters</div>
+
+                      {filters.map(filter => (
+                        <div key={filter.id} className={styles.settingRow}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontWeight: filter.enabled ? '600' : '400' }}>{filter.name}</span>
+                            <span className={styles.settingDescription}>
+                              {filter.conditions.map(c => `${c.field} ${c.operator} "${c.value}"`).join(', ')}
+                              {' \u2192 '}
+                              {filter.actions.map(a => a.action.replace('_', ' ')).join(', ')}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <Switch
+                              checked={filter.enabled}
+                              onChange={() => toggleFilter(filter.id, !filter.enabled)}
+                            />
+                            <Button
+                              size="small"
+                              appearance="subtle"
+                              icon={<DeleteRegular />}
+                              onClick={() => removeFilter(filter.id)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                      {filters.length === 0 && (
+                        <div style={{ color: tokens.colorNeutralForeground3, fontSize: '13px' }}>
+                          No filters created yet
                         </div>
                       )}
                     </div>
