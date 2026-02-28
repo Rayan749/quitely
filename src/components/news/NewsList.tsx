@@ -73,7 +73,7 @@ interface NewsListProps {
 
 export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   const styles = useStyles();
-  const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews } = useNewsStore();
+  const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews, hasMore, loadMore, totalCount } = useNewsStore();
   const { selectedCategory, selectedLabelId } = useUIStore();
   const { labels } = useLabelsStore();
 
@@ -84,7 +84,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   // Load news when feedId changes (only if not in category mode)
   React.useEffect(() => {
     if (feedId !== undefined && !selectedCategory) {
-      loadNews({ feedId, limit: 100 });
+      loadNews({ feedId, limit: 50 });
     }
   }, [feedId, selectedCategory, loadNews]);
 
@@ -146,7 +146,9 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span className={styles.title}>{filteredNews.length} articles</span>
+        <span className={styles.title}>
+          {totalCount > 0 ? `${news.length} of ${totalCount} articles` : `${news.length} articles`}
+        </span>
       </div>
       <div className={styles.list}>
         <Table size="small">
@@ -227,6 +229,17 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
             ))}
           </TableBody>
         </Table>
+        {hasMore && (
+          <div style={{ padding: '12px', textAlign: 'center' }}>
+            <Button
+              appearance="subtle"
+              onClick={loadMore}
+              disabled={loading}
+            >
+              Load more ({news.length} of {totalCount})
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

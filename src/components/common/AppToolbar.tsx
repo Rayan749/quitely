@@ -90,7 +90,7 @@ export function AppToolbar() {
       console.log('Updated feeds:', results);
       loadFeeds();
       if (selectedFeedId) {
-        loadNews({ feedId: selectedFeedId, limit: 100 });
+        loadNews({ feedId: selectedFeedId, limit: 50 });
       }
 
       // Show notification for new articles
@@ -126,7 +126,7 @@ export function AppToolbar() {
       clearSearch();
       // Reload current feed's articles
       if (selectedFeedId) {
-        loadNews({ feedId: selectedFeedId, limit: 100 });
+        loadNews({ feedId: selectedFeedId, limit: 50 });
       }
     }
   };
@@ -188,7 +188,7 @@ export function AppToolbar() {
               setSearchValue('');
               clearSearch();
               if (selectedFeedId) {
-                loadNews({ feedId: selectedFeedId, limit: 100 });
+                loadNews({ feedId: selectedFeedId, limit: 50 });
               }
             }
           } : undefined}
