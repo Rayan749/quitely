@@ -1,5 +1,4 @@
 import { Layout, AppToolbar } from './components/common';
-import { FeedTree } from './components/feeds';
 import { NewsList, NewspaperView } from './components/news';
 import { ContentViewer } from './components/content';
 import { useFeedStore, useNewsStore, useUIStore, useSettingsStore, useLabelsStore } from './stores';
@@ -75,9 +74,6 @@ function App() {
     <Layout>
       <AppToolbar />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <div style={{ width: '250px', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
-          <FeedTree />
-        </div>
         {contentLayout === 'newspaper' ? (
           <NewspaperView />
         ) : (

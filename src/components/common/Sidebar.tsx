@@ -1,111 +1,257 @@
-import { makeStyles, tokens, mergeClasses, Badge } from '@fluentui/react-components';
+import { makeStyles, tokens, Divider } from '@fluentui/react-components';
 import { MailUnreadFilled, StarFilled, DeleteFilled } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useUIStore, useLabelsStore } from '../../stores';
+import { useUIStore, useLabelsStore, useFeedStore } from '../../stores';
+import type { Feed } from '../../types';
+import React, { useMemo } from 'react';
 
 const useStyles = makeStyles({
-  sidebar: {
+  root: {
     display: 'flex',
     flexDirection: 'column',
-    width: '200px',
-    minWidth: '200px',
+    height: '100%',
     backgroundColor: tokens.colorNeutralBackground2,
     borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
+    overflow: 'hidden',
   },
-  categoriesPanel: {
+  content: {
     flex: 1,
-    overflow: 'auto',
-    padding: '8px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   },
-  categoryItem: {
+  section: {
+    padding: '8px 0',
+  },
+  sectionTitle: {
+    fontSize: '11px',
+    fontWeight: '600',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+    color: tokens.colorNeutralForeground3,
+    padding: '8px 16px 4px',
+  },
+  item: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    padding: '8px 12px',
+    padding: '8px 16px',
     cursor: 'pointer',
-    borderRadius: '4px',
     fontSize: '14px',
     color: tokens.colorNeutralForeground1,
-    '&:hover': {
+    ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
     },
   },
-  selected: {
+  itemSelected: {
     backgroundColor: tokens.colorNeutralBackground1Selected,
     fontWeight: '600',
   },
-  sectionTitle: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: tokens.colorNeutralForeground3,
-    padding: '12px 12px 4px',
-    textTransform: 'uppercase' as const,
+  labelBadge: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+  unreadBadge: {
+    marginLeft: 'auto',
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+    fontSize: '11px',
+    padding: '1px 6px',
+    borderRadius: '10px',
+  },
+  feedItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 16px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: tokens.colorNeutralForeground1,
+    ':hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+    },
+  },
+  feedChild: {
+    paddingLeft: '32px',
   },
 });
 
+interface FeedItemProps {
+  feed: Feed;
+  tree: Map<number, Feed[]>;
+  selectedFeedId: number | null;
+  onSelect: (id: number) => void;
+  level: number;
+}
+
+function FeedItem({ feed, tree, selectedFeedId, onSelect, level }: FeedItemProps): React.ReactElement {
+  const styles = useStyles();
+  const children = tree.get(feed.id) || [];
+  const hasChildren = children.length > 0;
+  const isSelected = selectedFeedId === feed.id;
+
+  return (
+    <div>
+      <div
+        className={`${styles.feedItem} ${isSelected ? styles.itemSelected : ''}`}
+        style={{ paddingLeft: `${16 + level * 16}px` }}
+        onClick={() => onSelect(feed.id)}
+      >
+        <span style={{ color: tokens.colorNeutralForeground3 }}>
+          {hasChildren ? '📁' : '📰'}
+        </span>
+        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {feed.title || feed.text}
+        </span>
+        {feed.unreadCount > 0 && (
+          <span className={styles.unreadBadge}>{feed.unreadCount}</span>
+        )}
+      </div>
+      {hasChildren && children.map((child) => (
+        <FeedItem
+          key={child.id}
+          feed={child}
+          tree={tree}
+          selectedFeedId={selectedFeedId}
+          onSelect={onSelect}
+          level={level + 1}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function Sidebar() {
   const styles = useStyles();
-  const { categoriesPanelVisible, selectedCategory, selectCategory, selectedLabelId, selectLabel } = useUIStore();
+  const {
+    selectedCategory,
+    selectCategory,
+    selectedLabelId,
+    selectLabel,
+  } = useUIStore();
   const { labels } = useLabelsStore();
+  const { feeds, selectedFeedId, selectFeed } = useFeedStore();
   const { t } = useTranslation();
 
-  if (!categoriesPanelVisible) {
-    return null;
-  }
+  // Build feed tree
+  const feedTree = useMemo(() => {
+    const tree = new Map<number, Feed[]>();
+    tree.set(0, []);
+
+    for (const feed of feeds) {
+      const parentId = feed.parentId || 0;
+      if (!tree.has(parentId)) {
+        tree.set(parentId, []);
+      }
+      tree.get(parentId)!.push(feed);
+    }
+
+    return tree;
+  }, [feeds]);
+
+  const rootFeeds = feedTree.get(0) || [];
 
   const handleCategoryClick = (category: 'unread' | 'starred' | 'deleted') => {
     selectCategory(selectedCategory === category ? null : category);
+    selectFeed(null);
+    selectLabel(null);
+  };
+
+  const handleLabelClick = (labelId: number) => {
+    selectLabel(selectedLabelId === labelId ? null : labelId);
+    selectFeed(null);
+    selectCategory(null);
+  };
+
+  const handleFeedSelect = (feedId: number) => {
+    selectFeed(feedId);
+    selectCategory(null);
+    selectLabel(null);
   };
 
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.categoriesPanel}>
-        <div className={styles.sectionTitle}>{t('sidebar.categories')}</div>
-        <div
-          className={mergeClasses(styles.categoryItem, selectedCategory === 'unread' ? styles.selected : '')}
-          onClick={() => handleCategoryClick('unread')}
-        >
-          <MailUnreadFilled />
-          <span>{t('sidebar.unread')}</span>
-        </div>
-        <div
-          className={mergeClasses(styles.categoryItem, selectedCategory === 'starred' ? styles.selected : '')}
-          onClick={() => handleCategoryClick('starred')}
-        >
-          <StarFilled />
-          <span>{t('sidebar.starred')}</span>
-        </div>
-        <div
-          className={mergeClasses(styles.categoryItem, selectedCategory === 'deleted' ? styles.selected : '')}
-          onClick={() => handleCategoryClick('deleted')}
-        >
-          <DeleteFilled />
-          <span>{t('sidebar.deleted')}</span>
+    <nav className={styles.root} style={{ width: '260px', minWidth: '200px' }}>
+      <div className={styles.content}>
+        {/* Categories Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>
+            {t('sidebar.categories', '分类')}
+          </div>
+          <div
+            className={`${styles.item} ${selectedCategory === 'unread' ? styles.itemSelected : ''}`}
+            onClick={() => handleCategoryClick('unread')}
+          >
+            <MailUnreadFilled />
+            <span>{t('sidebar.unread', '未读')}</span>
+          </div>
+          <div
+            className={`${styles.item} ${selectedCategory === 'starred' ? styles.itemSelected : ''}`}
+            onClick={() => handleCategoryClick('starred')}
+          >
+            <StarFilled />
+            <span>{t('sidebar.starred', '收藏')}</span>
+          </div>
+          <div
+            className={`${styles.item} ${selectedCategory === 'deleted' ? styles.itemSelected : ''}`}
+            onClick={() => handleCategoryClick('deleted')}
+          >
+            <DeleteFilled />
+            <span>{t('sidebar.deleted', '已删除')}</span>
+          </div>
         </div>
 
-        <div className={styles.sectionTitle}>{t('sidebar.labels')}</div>
-        {labels.map(label => (
-          <div
-            key={label.id}
-            className={mergeClasses(styles.categoryItem, selectedLabelId === label.id ? styles.selected : '')}
-            onClick={() => selectLabel(selectedLabelId === label.id ? null : label.id)}
-          >
-            <Badge
-              size="tiny"
-              appearance="filled"
-              style={{ backgroundColor: label.color || '#0078d4' }}
+        <Divider />
+
+        {/* Labels Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>
+            {t('sidebar.labels', '标签')}
+          </div>
+          {labels.map((label) => (
+            <div
+              key={label.id}
+              className={`${styles.item} ${selectedLabelId === label.id ? styles.itemSelected : ''}`}
+              onClick={() => handleLabelClick(label.id)}
             >
-              &nbsp;
-            </Badge>
-            <span>{label.name}</span>
+              <span
+                className={styles.labelBadge}
+                style={{ backgroundColor: label.color || '#0078d4' }}
+              />
+              <span>{label.name}</span>
+            </div>
+          ))}
+          {labels.length === 0 && (
+            <div style={{ padding: '8px 16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+              {t('sidebar.noLabels', '暂无标签')}
+            </div>
+          )}
+        </div>
+
+        <Divider />
+
+        {/* Feeds Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>
+            {t('sidebar.feeds', '订阅源')}
           </div>
-        ))}
-        {labels.length === 0 && (
-          <div style={{ padding: '4px 12px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-            {t('sidebar.noLabels')}
-          </div>
-        )}
+          {rootFeeds.map((feed) => (
+            <FeedItem
+              key={feed.id}
+              feed={feed}
+              tree={feedTree}
+              selectedFeedId={selectedFeedId}
+              onSelect={handleFeedSelect}
+              level={0}
+            />
+          ))}
+          {feeds.length === 0 && (
+            <div style={{ padding: '16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+              {t('sidebar.noFeeds', '暂无订阅源')}
+            </div>
+          )}
+        </div>
       </div>
-    </aside>
+    </nav>
   );
 }
