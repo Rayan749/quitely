@@ -3,8 +3,7 @@ import { MailUnreadFilled, StarFilled, DeleteFilled, SettingsRegular } from '@fl
 import { useTranslation } from 'react-i18next';
 import { useUIStore, useLabelsStore, useFeedStore } from '../../stores';
 import { LabelDialog } from '../settings';
-import type { Feed } from '../../types';
-import React, { useMemo } from 'react';
+import { FeedTree } from '../feeds';
 
 const useStyles = makeStyles({
   root: {
@@ -57,75 +56,7 @@ const useStyles = makeStyles({
     borderRadius: '50%',
     flexShrink: 0,
   },
-  unreadBadge: {
-    marginLeft: 'auto',
-    backgroundColor: tokens.colorBrandBackground,
-    color: tokens.colorNeutralForegroundOnBrand,
-    fontSize: '11px',
-    padding: '1px 6px',
-    borderRadius: '10px',
-  },
-  feedItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '6px 16px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    color: tokens.colorNeutralForeground1,
-    ':hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-    },
-  },
-  feedChild: {
-    paddingLeft: '32px',
-  },
 });
-
-interface FeedItemProps {
-  feed: Feed;
-  tree: Map<number, Feed[]>;
-  selectedFeedId: number | null;
-  onSelect: (id: number) => void;
-  level: number;
-}
-
-function FeedItem({ feed, tree, selectedFeedId, onSelect, level }: FeedItemProps): React.ReactElement {
-  const styles = useStyles();
-  const children = tree.get(feed.id) || [];
-  const hasChildren = children.length > 0;
-  const isSelected = selectedFeedId === feed.id;
-
-  return (
-    <div>
-      <div
-        className={`${styles.feedItem} ${isSelected ? styles.itemSelected : ''}`}
-        style={{ paddingLeft: `${16 + level * 16}px` }}
-        onClick={() => onSelect(feed.id)}
-      >
-        <span style={{ color: tokens.colorNeutralForeground3 }}>
-          {hasChildren ? '📁' : '📰'}
-        </span>
-        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {feed.title || feed.text}
-        </span>
-        {feed.unreadCount > 0 && (
-          <span className={styles.unreadBadge}>{feed.unreadCount}</span>
-        )}
-      </div>
-      {hasChildren && children.map((child) => (
-        <FeedItem
-          key={child.id}
-          feed={child}
-          tree={tree}
-          selectedFeedId={selectedFeedId}
-          onSelect={onSelect}
-          level={level + 1}
-        />
-      ))}
-    </div>
-  );
-}
 
 export function Sidebar() {
   const styles = useStyles();
@@ -137,26 +68,8 @@ export function Sidebar() {
     setSettingsPageOpen,
   } = useUIStore();
   const { labels } = useLabelsStore();
-  const { feeds, selectedFeedId, selectFeed } = useFeedStore();
+  const { selectFeed } = useFeedStore();
   const { t } = useTranslation();
-
-  // Build feed tree
-  const feedTree = useMemo(() => {
-    const tree = new Map<number, Feed[]>();
-    tree.set(0, []);
-
-    for (const feed of feeds) {
-      const parentId = feed.parentId || 0;
-      if (!tree.has(parentId)) {
-        tree.set(parentId, []);
-      }
-      tree.get(parentId)!.push(feed);
-    }
-
-    return tree;
-  }, [feeds]);
-
-  const rootFeeds = feedTree.get(0) || [];
 
   const handleCategoryClick = (category: 'unread' | 'starred' | 'deleted') => {
     selectCategory(selectedCategory === category ? null : category);
@@ -168,12 +81,6 @@ export function Sidebar() {
     selectLabel(selectedLabelId === labelId ? null : labelId);
     selectFeed(null);
     selectCategory(null);
-  };
-
-  const handleFeedSelect = (feedId: number) => {
-    selectFeed(feedId);
-    selectCategory(null);
-    selectLabel(null);
   };
 
   return (
@@ -211,24 +118,7 @@ export function Sidebar() {
 
         {/* Feeds Section */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>
-            {t('sidebar.feeds')}
-          </div>
-          {rootFeeds.map((feed) => (
-            <FeedItem
-              key={feed.id}
-              feed={feed}
-              tree={feedTree}
-              selectedFeedId={selectedFeedId}
-              onSelect={handleFeedSelect}
-              level={0}
-            />
-          ))}
-          {feeds.length === 0 && (
-            <div style={{ padding: '16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-              {t('sidebar.noFeeds')}
-            </div>
-          )}
+          <FeedTree />
         </div>
 
         <Divider />

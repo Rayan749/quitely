@@ -32,7 +32,7 @@
     "newArticlesFound_other": "发现 {{count}} 篇新文章"
   },
   "feedTree": {
-    "empty": "还没有订阅源。点击"添加订阅源"开始。",
+    "empty": "还没有订阅源。点击「添加订阅源」开始。",
     "rename": "重命名",
     "delete": "删除",
     "addFeed": "添加订阅源",

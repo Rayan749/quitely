@@ -41,15 +41,24 @@ const useStyles = makeStyles({
   },
 });
 
-export function AddFeedDialog() {
+interface AddFeedDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function AddFeedDialog({ open: controlledOpen, onOpenChange }: AddFeedDialogProps) {
   const styles = useStyles();
   const { t } = useTranslation();
   const { addFeed } = useFeedStore();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<{ title: string; description?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Use controlled state if provided, otherwise use internal state
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
 
   const handlePreview = async () => {
     if (!url.trim()) return;
@@ -98,18 +107,20 @@ export function AddFeedDialog() {
 
   return (
     <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
-      <DialogTrigger disableButtonEnhancement>
-        <Button appearance="primary" icon={<AddFilled />}>
-          {t('addFeed.title')}
-        </Button>
-      </DialogTrigger>
+      {onOpenChange === undefined ? (
+        <DialogTrigger disableButtonEnhancement>
+          <Button appearance="primary" icon={<AddFilled />}>
+            {t('addFeed.title')}
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogSurface>
         <DialogTitle>{t('addFeed.title')}</DialogTitle>
         <DialogBody>
           <DialogContent>
             <div className={styles.form}>
               <div className={styles.field}>
-                <Label htmlFor="feed-url">Feed URL</Label>
+                <Label htmlFor="feed-url">{t('addFeed.urlLabel')}</Label>
                 <Input
                   id="feed-url"
                   placeholder="https://example.com/feed.xml"
@@ -120,7 +131,7 @@ export function AddFeedDialog() {
               </div>
 
               <Button onClick={handlePreview} disabled={!url.trim() || loading}>
-                {loading ? <Spinner size="tiny" /> : 'Preview'}
+                {loading ? <Spinner size="tiny" /> : t('addFeed.preview')}
               </Button>
 
               {preview && (
@@ -139,14 +150,14 @@ export function AddFeedDialog() {
           </DialogContent>
           <DialogActions>
             <Button appearance="secondary" onClick={handleClose}>
-              Cancel
+              {t('addFeed.cancel')}
             </Button>
             <Button
               appearance="primary"
               onClick={handleSubmit}
               disabled={!url.trim() || loading}
             >
-              {loading ? <Spinner size="tiny" /> : 'Add'}
+              {loading ? <Spinner size="tiny" /> : t('addFeed.add')}
             </Button>
           </DialogActions>
         </DialogBody>
