@@ -2,7 +2,7 @@ import { makeStyles, tokens, Button, Link, Menu, MenuTrigger, MenuPopover, MenuL
 import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular, TagRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useNewsStore, useLabelsStore, useSettingsStore } from '../../stores';
-import DOMPurify from 'dompurify';
+import { getDateLocale } from '../../utils/i18nDate';
 
 const useStyles = makeStyles({
   container: {
@@ -136,7 +136,7 @@ export function ContentViewer() {
     if (!dateStr) return '';
     try {
       const date = new Date(dateStr);
-      return date.toLocaleDateString('zh-CN', {
+      return date.toLocaleDateString(getDateLocale(), {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -162,7 +162,7 @@ export function ContentViewer() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{selectedNews.title || 'Untitled'}</h1>
+        <h1 className={styles.title}>{selectedNews.title || t('contentViewer.untitled')}</h1>
         <div className={styles.actions}>
           <Button
             appearance="subtle"
