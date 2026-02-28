@@ -203,6 +203,30 @@ export function Sidebar() {
 
         <Divider />
 
+        {/* Feeds Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>
+            {t('sidebar.feeds', '订阅源')}
+          </div>
+          {rootFeeds.map((feed) => (
+            <FeedItem
+              key={feed.id}
+              feed={feed}
+              tree={feedTree}
+              selectedFeedId={selectedFeedId}
+              onSelect={handleFeedSelect}
+              level={0}
+            />
+          ))}
+          {feeds.length === 0 && (
+            <div style={{ padding: '16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+              {t('sidebar.noFeeds', '暂无订阅源')}
+            </div>
+          )}
+        </div>
+
+        <Divider />
+
         {/* Labels Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
@@ -224,30 +248,6 @@ export function Sidebar() {
           {labels.length === 0 && (
             <div style={{ padding: '8px 16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
               {t('sidebar.noLabels', '暂无标签')}
-            </div>
-          )}
-        </div>
-
-        <Divider />
-
-        {/* Feeds Section */}
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>
-            {t('sidebar.feeds', '订阅源')}
-          </div>
-          {rootFeeds.map((feed) => (
-            <FeedItem
-              key={feed.id}
-              feed={feed}
-              tree={feedTree}
-              selectedFeedId={selectedFeedId}
-              onSelect={handleFeedSelect}
-              level={0}
-            />
-          ))}
-          {feeds.length === 0 && (
-            <div style={{ padding: '16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-              {t('sidebar.noFeeds', '暂无订阅源')}
             </div>
           )}
         </div>
