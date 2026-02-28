@@ -32,9 +32,16 @@
     "newArticlesFound_other": "发现 {{count}} 篇新文章"
   },
   "feedTree": {
-    "empty": "暂无订阅源，点击「添加订阅」开始。",
+    "empty": "还没有订阅源。点击"添加订阅源"开始。",
     "rename": "重命名",
-    "delete": "删除"
+    "delete": "删除",
+    "addFeed": "添加订阅源",
+    "newFolder": "新建文件夹",
+    "refreshFeed": "刷新订阅源",
+    "properties": "属性",
+    "markAllRead": "全部标记为已读",
+    "star": "加星",
+    "unstar": "取消加星"
   },
   "newsList": {
     "articles": "篇文章",

@@ -34,7 +34,14 @@
   "feedTree": {
     "empty": "No feeds yet. Click \"Add Feed\" to get started.",
     "rename": "Rename",
-    "delete": "Delete"
+    "delete": "Delete",
+    "addFeed": "Add Feed",
+    "newFolder": "New Folder",
+    "refreshFeed": "Refresh Feed",
+    "properties": "Properties",
+    "markAllRead": "Mark All as Read",
+    "star": "Star",
+    "unstar": "Unstar"
   },
   "newsList": {
     "articles": "articles",
