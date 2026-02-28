@@ -1,6 +1,7 @@
 import { makeStyles, tokens, Button, Link } from '@fluentui/react-components';
 import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
 import { useNewsStore } from '../../stores';
+import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({
   container: {
@@ -205,7 +206,9 @@ export function ContentViewer() {
         <div
           className={styles.articleContent}
           dangerouslySetInnerHTML={{
-            __html: selectedNews.content || selectedNews.description || '<p>No content available</p>',
+            __html: DOMPurify.sanitize(
+              selectedNews.content || selectedNews.description || '<p>No content available</p>'
+            ),
           }}
         />
       </div>

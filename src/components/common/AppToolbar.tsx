@@ -1,11 +1,11 @@
 import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
-import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled } from '@fluentui/react-icons';
+import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular, TextColumnOneRegular, GridRegular } from '@fluentui/react-icons';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
-import { useFeedStore, useNewsStore } from '../../stores';
+import { useFeedStore, useNewsStore, useSettingsStore, useUIStore } from '../../stores';
 import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 
 const useStyles = makeStyles({
@@ -20,8 +20,29 @@ const useStyles = makeStyles({
 
 export function AppToolbar() {
   const styles = useStyles();
-  const { loadFeeds, selectedFeedId } = useFeedStore();
+  const { loadFeeds, selectedFeedId, addFeed } = useFeedStore();
   const { loadNews } = useNewsStore();
+  const { settings, updateSetting } = useSettingsStore();
+  const { contentLayout, setContentLayout } = useUIStore();
+
+  const handleLayoutToggle = () => {
+    setContentLayout(contentLayout === 'list' ? 'newspaper' : 'list');
+  };
+
+  const handleThemeToggle = () => {
+    const next = settings.theme === 'light' ? 'dark' : settings.theme === 'dark' ? 'system' : 'light';
+    updateSetting('theme', next);
+  };
+
+  const themeLabel = settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System';
+
+  const handleNewFolder = async () => {
+    try {
+      await addFeed({ xmlUrl: '', title: 'New Folder' });
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+    }
+  };
 
   const handleImportOpml = async () => {
     try {
@@ -94,6 +115,15 @@ export function AppToolbar() {
       <Toolbar>
         <AddFeedDialog />
 
+        <Button
+          appearance="subtle"
+          icon={<FolderAddRegular />}
+          onClick={handleNewFolder}
+          title="New folder"
+        >
+          Folder
+        </Button>
+
         <ToolbarDivider />
 
         <Button
@@ -123,6 +153,26 @@ export function AppToolbar() {
           title="Refresh all feeds"
         >
           Refresh
+        </Button>
+
+        <ToolbarDivider />
+
+        <Button
+          appearance="subtle"
+          icon={contentLayout === 'list' ? <TextColumnOneRegular /> : <GridRegular />}
+          onClick={handleLayoutToggle}
+          title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
+        >
+          {contentLayout === 'list' ? 'List' : 'News'}
+        </Button>
+
+        <Button
+          appearance="subtle"
+          icon={settings.theme === 'dark' ? <WeatherMoonRegular /> : <WeatherSunnyRegular />}
+          onClick={handleThemeToggle}
+          title={`Theme: ${themeLabel}`}
+        >
+          {themeLabel}
         </Button>
 
         <ToolbarDivider />

@@ -1,4 +1,5 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
+import { MailUnreadFilled, StarFilled, DeleteFilled } from '@fluentui/react-icons';
 import { useUIStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -7,35 +8,81 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     width: '200px',
     minWidth: '200px',
-    backgroundColor: '#f5f5f5',
-    borderRight: '1px solid #e0e0e0',
+    backgroundColor: tokens.colorNeutralBackground2,
+    borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   categoriesPanel: {
     flex: 1,
     overflow: 'auto',
     padding: '8px',
   },
+  categoryItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    fontSize: '14px',
+    color: tokens.colorNeutralForeground1,
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+    },
+  },
+  selected: {
+    backgroundColor: tokens.colorNeutralBackground1Selected,
+    fontWeight: '600',
+  },
+  sectionTitle: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: tokens.colorNeutralForeground3,
+    padding: '12px 12px 4px',
+    textTransform: 'uppercase' as const,
+  },
 });
 
 export function Sidebar() {
   const styles = useStyles();
-  const { categoriesPanelVisible } = useUIStore();
+  const { categoriesPanelVisible, selectedCategory, selectCategory } = useUIStore();
 
   if (!categoriesPanelVisible) {
     return null;
   }
 
+  const handleCategoryClick = (category: 'unread' | 'starred' | 'deleted') => {
+    selectCategory(selectedCategory === category ? null : category);
+  };
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.categoriesPanel}>
-        <div style={{ padding: '16px 8px', color: '#666' }}>
-          未读
-          <br />
-          收藏
-          <br />
-          标签
-          <br />
-          已删除
+        <div className={styles.sectionTitle}>Categories</div>
+        <div
+          className={mergeClasses(styles.categoryItem, selectedCategory === 'unread' ? styles.selected : '')}
+          onClick={() => handleCategoryClick('unread')}
+        >
+          <MailUnreadFilled />
+          <span>Unread</span>
+        </div>
+        <div
+          className={mergeClasses(styles.categoryItem, selectedCategory === 'starred' ? styles.selected : '')}
+          onClick={() => handleCategoryClick('starred')}
+        >
+          <StarFilled />
+          <span>Starred</span>
+        </div>
+        <div
+          className={mergeClasses(styles.categoryItem, selectedCategory === 'deleted' ? styles.selected : '')}
+          onClick={() => handleCategoryClick('deleted')}
+        >
+          <DeleteFilled />
+          <span>Deleted</span>
+        </div>
+
+        <div className={styles.sectionTitle}>Labels</div>
+        <div style={{ padding: '4px 12px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+          No labels yet
         </div>
       </div>
     </aside>

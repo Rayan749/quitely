@@ -26,6 +26,10 @@ interface AppSettings {
   autoLoadImages: boolean;
   enableJavaScript: boolean;
 
+  // Appearance
+  theme: 'light' | 'dark' | 'system';
+  cleanupDays: number;
+
   // Notifications
   enableNotifications: boolean;
   playSound: boolean;
@@ -55,6 +59,8 @@ const defaultSettings: AppSettings = {
   useEmbeddedBrowser: true,
   autoLoadImages: true,
   enableJavaScript: true,
+  theme: 'system' as const,
+  cleanupDays: 30,
   enableNotifications: true,
   playSound: false,
 };
@@ -74,6 +80,8 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   useEmbeddedBrowser: 'browser.use_embedded',
   autoLoadImages: 'browser.auto_load_images',
   enableJavaScript: 'browser.enable_javascript',
+  theme: 'appearance.theme',
+  cleanupDays: 'feed.cleanup_days',
   enableNotifications: 'notifications.enabled',
   playSound: 'notifications.play_sound',
 };
