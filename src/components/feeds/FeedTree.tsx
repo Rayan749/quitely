@@ -2,7 +2,8 @@ import { makeStyles, tokens, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem,
 import { FolderFilled, DocumentTextFilled, EditRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useFeedStore } from '../../stores';
 import type { Feed } from '../../types';
-import React from 'react';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
   container: {
@@ -76,6 +77,7 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
   const hasChildren = children.length > 0;
   const isSelected = selectedFeedId === feed.id;
   const isRenaming = renamingId === feed.id;
+  const { t } = useTranslation();
 
   const handleRenameSubmit = () => {
     if (renameValue.trim()) {
@@ -124,13 +126,13 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
                 setRenameValue(feed.text || feed.title);
               }}
             >
-              Rename
+              {t('feedTree.rename')}
             </MenuItem>
             <MenuItem
               icon={<DeleteRegular />}
               onClick={() => onDelete(feed.id)}
             >
-              Delete
+              {t('feedTree.delete')}
             </MenuItem>
           </MenuList>
         </MenuPopover>
@@ -165,6 +167,7 @@ export function FeedTree() {
   const { feeds, selectedFeedId, selectFeed, updateFeed, deleteFeed: removeFeed } = useFeedStore();
   const [renamingId, setRenamingId] = React.useState<number | null>(null);
   const [renameValue, setRenameValue] = React.useState('');
+  const { t } = useTranslation();
 
   const tree = buildFeedTree(feeds);
   const rootFeeds = tree.get(0) || [];
@@ -197,7 +200,7 @@ export function FeedTree() {
       ))}
       {feeds.length === 0 && (
         <div style={{ padding: '16px', color: tokens.colorNeutralForeground3 }}>
-          No feeds yet. Click "Add Feed" to get started.
+          {t('feedTree.empty')}
         </div>
       )}
     </div>

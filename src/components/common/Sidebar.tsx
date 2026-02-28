@@ -182,28 +182,28 @@ export function Sidebar() {
         {/* Categories Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
-            {t('sidebar.categories', '分类')}
+            {t('sidebar.categories')}
           </div>
           <div
             className={`${styles.item} ${selectedCategory === 'unread' ? styles.itemSelected : ''}`}
             onClick={() => handleCategoryClick('unread')}
           >
             <MailUnreadFilled />
-            <span>{t('sidebar.unread', '未读')}</span>
+            <span>{t('sidebar.unread')}</span>
           </div>
           <div
             className={`${styles.item} ${selectedCategory === 'starred' ? styles.itemSelected : ''}`}
             onClick={() => handleCategoryClick('starred')}
           >
             <StarFilled />
-            <span>{t('sidebar.starred', '收藏')}</span>
+            <span>{t('sidebar.starred')}</span>
           </div>
           <div
             className={`${styles.item} ${selectedCategory === 'deleted' ? styles.itemSelected : ''}`}
             onClick={() => handleCategoryClick('deleted')}
           >
             <DeleteFilled />
-            <span>{t('sidebar.deleted', '已删除')}</span>
+            <span>{t('sidebar.deleted')}</span>
           </div>
         </div>
 
@@ -212,7 +212,7 @@ export function Sidebar() {
         {/* Feeds Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle}>
-            {t('sidebar.feeds', '订阅源')}
+            {t('sidebar.feeds')}
           </div>
           {rootFeeds.map((feed) => (
             <FeedItem
@@ -226,7 +226,7 @@ export function Sidebar() {
           ))}
           {feeds.length === 0 && (
             <div style={{ padding: '16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-              {t('sidebar.noFeeds', '暂无订阅源')}
+              {t('sidebar.noFeeds')}
             </div>
           )}
         </div>
@@ -236,7 +236,7 @@ export function Sidebar() {
         {/* Labels Section */}
         <div className={styles.section}>
           <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '8px' }}>
-            <span>{t('sidebar.labels', '标签')}</span>
+            <span>{t('sidebar.labels')}</span>
             <LabelDialog />
           </div>
           {labels.map((label) => (
@@ -254,7 +254,7 @@ export function Sidebar() {
           ))}
           {labels.length === 0 && (
             <div style={{ padding: '8px 16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-              {t('sidebar.noLabels', '暂无标签')}
+              {t('sidebar.noLabels')}
             </div>
           )}
         </div>
@@ -266,7 +266,7 @@ export function Sidebar() {
             onClick={() => setSettingsPageOpen(true)}
             style={{ width: '100%', justifyContent: 'flex-start' }}
           >
-            {t('sidebar.settings', '设置')}
+            {t('sidebar.settings')}
           </Button>
         </div>
       </div>

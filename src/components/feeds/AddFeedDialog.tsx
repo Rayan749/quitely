@@ -16,6 +16,7 @@ import {
   Text,
 } from '@fluentui/react-components';
 import { AddFilled } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useFeedStore } from '../../stores';
 import * as api from '../../api/commands';
 
@@ -42,7 +43,9 @@ const useStyles = makeStyles({
 
 export function AddFeedDialog() {
   const styles = useStyles();
+  const { t } = useTranslation();
   const { addFeed } = useFeedStore();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -98,11 +101,11 @@ export function AddFeedDialog() {
     <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
       <DialogTrigger disableButtonEnhancement>
         <Button appearance="primary" icon={<AddFilled />}>
-          Add Feed
+          {t('addFeed.title')}
         </Button>
       </DialogTrigger>
       <DialogSurface>
-        <DialogTitle>Add Feed</DialogTitle>
+        <DialogTitle>{t('addFeed.title')}</DialogTitle>
         <DialogBody>
           <DialogContent>
             <div className={styles.form}>
