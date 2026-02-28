@@ -97,7 +97,7 @@ export function SettingsPage() {
   const { labels, loadLabels, removeLabel } = useLabelsStore();
   const { filters, loadFilters, addFilter, removeFilter, toggleFilter } = useFiltersStore();
   const { settingsPageOpen, setSettingsPageOpen } = useUIStore();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [filterName, setFilterName] = React.useState('');
   const [filterField, setFilterField] = React.useState('title');
   const [filterOperator, setFilterOperator] = React.useState('contains');
@@ -125,15 +125,15 @@ export function SettingsPage() {
   }
 
   const tabs = [
-    { id: 'general', label: 'General' },
-    { id: 'tray', label: 'System Tray' },
-    { id: 'network', label: 'Network' },
-    { id: 'feed', label: 'Feed' },
-    { id: 'browser', label: 'Browser' },
-    { id: 'notifications', label: 'Notifications' },
-    { id: 'labels', label: 'Labels' },
-    { id: 'filters', label: 'Filters' },
-    { id: 'appearance', label: 'Appearance' },
+    { id: 'general', label: t('settings.general') },
+    { id: 'tray', label: t('settings.tray') },
+    { id: 'network', label: t('settings.network') },
+    { id: 'feed', label: t('settings.feed') },
+    { id: 'browser', label: t('settings.browser') },
+    { id: 'notifications', label: t('settings.notifications') },
+    { id: 'labels', label: t('settings.labels') },
+    { id: 'filters', label: t('settings.filters') },
+    { id: 'appearance', label: t('settings.appearance') },
   ];
 
   return (
@@ -145,7 +145,7 @@ export function SettingsPage() {
           onClick={handleClose}
           className={styles.backButton}
         >
-          Back
+          {t('settings.back')}
         </Button>
         <Subtitle2>Settings</Subtitle2>
       </div>
