@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { Feed, CreateFeed, UpdateFeed, FeedCount, News, NewsFilter, NewsUpdate, Label, CreateLabel, UpdateLabel } from '../types';
+import type { Feed, CreateFeed, UpdateFeed, FeedCount, News, NewsFilter, NewsUpdate, Label, CreateLabel, UpdateLabel, Filter, CreateFilter } from '../types';
 
 // Parsed feed info from URL
 export interface ParsedFeed {
@@ -112,6 +112,23 @@ export async function deleteLabel(id: number): Promise<void> {
 
 export async function setArticleLabels(newsIds: number[], labelIds: number[]): Promise<void> {
   return invoke('set_article_labels', { newsIds, labelIds });
+}
+
+// Filter commands
+export async function getFilters(): Promise<Filter[]> {
+  return invoke<Filter[]>('get_filters');
+}
+
+export async function createFilter(filter: CreateFilter): Promise<number> {
+  return invoke<number>('create_filter', { filter });
+}
+
+export async function deleteFilter(id: number): Promise<void> {
+  return invoke('delete_filter', { id });
+}
+
+export async function setFilterEnabled(id: number, enabled: boolean): Promise<void> {
+  return invoke('set_filter_enabled', { id, enabled });
 }
 
 // Feed update commands
