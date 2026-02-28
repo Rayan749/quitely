@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use std::time::Duration;
-use tokio::time::interval;
 use tauri::{AppHandle, Emitter, Runtime};
+use tauri::async_runtime::spawn;
+use tokio::time::interval;
 
 pub struct FeedScheduler {
     interval_minutes: u64,
@@ -15,7 +15,7 @@ impl FeedScheduler {
     pub fn start<R: Runtime>(&self, app: AppHandle<R>) {
         let interval_mins = self.interval_minutes;
 
-        tokio::spawn(async move {
+        spawn(async move {
             let mut ticker = interval(Duration::from_secs(interval_mins * 60));
 
             loop {
