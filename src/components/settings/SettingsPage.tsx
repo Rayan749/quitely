@@ -147,7 +147,7 @@ export function SettingsPage() {
         >
           {t('settings.back')}
         </Button>
-        <Subtitle2>Settings</Subtitle2>
+        <Subtitle2>{t('settings.title')}</Subtitle2>
       </div>
 
       <div className={styles.content}>
@@ -180,22 +180,22 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Reopen feeds on startup</span>
-                      <span className={styles.settingDescription}>Restore previously open feeds</span>
+                      <span>{t('settings.reopenFeeds')}</span>
+                      <span className={styles.settingDescription}>{t('settings.reopenFeedsDesc')}</span>
                     </div>
                     <Switch checked={settings.reopenFeedsOnStartup} onChange={() => handleToggle('reopenFeedsOnStartup')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Open tabs next to current</span>
-                      <span className={styles.settingDescription}>New tabs open next to the current tab</span>
+                      <span>{t('settings.openTabsNext')}</span>
+                      <span className={styles.settingDescription}>{t('settings.openTabsNextDesc')}</span>
                     </div>
                     <Switch checked={settings.openTabsNextToCurrent} onChange={() => handleToggle('openTabsNextToCurrent')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Language</span>
-                      <span className={styles.settingDescription}>Application language</span>
+                      <span>{t('settings.languageLabel')}</span>
+                      <span className={styles.settingDescription}>{t('settings.languageDesc')}</span>
                     </div>
                     <Dropdown
                       size="small"
@@ -215,25 +215,25 @@ export function SettingsPage() {
 
               {selectedTab === 'tray' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>System Tray</div>
+                  <div className={styles.sectionTitle}>{t('settings.tray')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Show tray icon</span>
-                      <span className={styles.settingDescription}>Display icon in system tray</span>
+                      <span>{t('settings.showTrayIcon')}</span>
+                      <span className={styles.settingDescription}>{t('settings.showTrayIconDesc')}</span>
                     </div>
                     <Switch checked={settings.showTrayIcon} onChange={() => handleToggle('showTrayIcon')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Minimize to tray</span>
-                      <span className={styles.settingDescription}>Minimize window to tray instead of taskbar</span>
+                      <span>{t('settings.minimizeToTray')}</span>
+                      <span className={styles.settingDescription}>{t('settings.minimizeToTrayDesc')}</span>
                     </div>
                     <Switch checked={settings.minimizeToTray} onChange={() => handleToggle('minimizeToTray')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Close to tray</span>
-                      <span className={styles.settingDescription}>Close window to tray instead of quitting</span>
+                      <span>{t('settings.closeToTray')}</span>
+                      <span className={styles.settingDescription}>{t('settings.closeToTrayDesc')}</span>
                     </div>
                     <Switch checked={settings.closeToTray} onChange={() => handleToggle('closeToTray')} />
                   </div>
@@ -242,11 +242,11 @@ export function SettingsPage() {
 
               {selectedTab === 'network' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Network Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.networkSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Request timeout (seconds)</span>
-                      <span className={styles.settingDescription}>Timeout for feed requests</span>
+                      <span>{t('settings.requestTimeout')}</span>
+                      <span className={styles.settingDescription}>{t('settings.requestTimeoutDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.requestTimeout}
@@ -258,8 +258,8 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Concurrent requests</span>
-                      <span className={styles.settingDescription}>Maximum concurrent feed updates</span>
+                      <span>{t('settings.concurrentRequests')}</span>
+                      <span className={styles.settingDescription}>{t('settings.concurrentRequestsDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.concurrentRequests}
@@ -271,13 +271,13 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Proxy URL</span>
-                      <span className={styles.settingDescription}>HTTP/HTTPS/SOCKS5 proxy</span>
+                      <span>{t('settings.proxyUrl')}</span>
+                      <span className={styles.settingDescription}>{t('settings.proxyUrlDesc')}</span>
                     </div>
                     <Input
                       size="small"
                       value={settings.proxyUrl}
-                      placeholder="Leave empty for direct connection"
+                      placeholder={t('settings.proxyPlaceholder')}
                       onChange={(_, data) => updateSetting('proxyUrl', data.value)}
                       style={{ width: '250px' }}
                     />
@@ -287,18 +287,18 @@ export function SettingsPage() {
 
               {selectedTab === 'feed' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Feed Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.feedSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Update on startup</span>
-                      <span className={styles.settingDescription}>Automatically update feeds on startup</span>
+                      <span>{t('settings.updateOnStartup')}</span>
+                      <span className={styles.settingDescription}>{t('settings.updateOnStartupDesc')}</span>
                     </div>
                     <Switch checked={settings.updateOnStartup} onChange={() => handleToggle('updateOnStartup')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Auto update interval (minutes)</span>
-                      <span className={styles.settingDescription}>Interval for automatic feed updates</span>
+                      <span>{t('settings.autoUpdateInterval')}</span>
+                      <span className={styles.settingDescription}>{t('settings.autoUpdateIntervalDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.autoUpdateInterval}
@@ -310,15 +310,15 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Mark read on select</span>
-                      <span className={styles.settingDescription}>Automatically mark articles as read when selected</span>
+                      <span>{t('settings.markReadOnSelect')}</span>
+                      <span className={styles.settingDescription}>{t('settings.markReadOnSelectDesc')}</span>
                     </div>
                     <Switch checked={settings.markReadOnSelect} onChange={() => handleToggle('markReadOnSelect')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Cleanup deleted articles (days)</span>
-                      <span className={styles.settingDescription}>Permanently delete articles older than this many days</span>
+                      <span>{t('settings.cleanupDays')}</span>
+                      <span className={styles.settingDescription}>{t('settings.cleanupDaysDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.cleanupDays}
@@ -333,25 +333,25 @@ export function SettingsPage() {
 
               {selectedTab === 'browser' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Browser Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.browserSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Use embedded browser</span>
-                      <span className={styles.settingDescription}>Open links in embedded browser instead of external</span>
+                      <span>{t('settings.useEmbeddedBrowser')}</span>
+                      <span className={styles.settingDescription}>{t('settings.useEmbeddedBrowserDesc')}</span>
                     </div>
                     <Switch checked={settings.useEmbeddedBrowser} onChange={() => handleToggle('useEmbeddedBrowser')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Auto load images</span>
-                      <span className={styles.settingDescription}>Automatically load images in articles</span>
+                      <span>{t('settings.autoLoadImages')}</span>
+                      <span className={styles.settingDescription}>{t('settings.autoLoadImagesDesc')}</span>
                     </div>
                     <Switch checked={settings.autoLoadImages} onChange={() => handleToggle('autoLoadImages')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Enable JavaScript</span>
-                      <span className={styles.settingDescription}>Enable JavaScript in embedded browser</span>
+                      <span>{t('settings.enableJavaScript')}</span>
+                      <span className={styles.settingDescription}>{t('settings.enableJavaScriptDesc')}</span>
                     </div>
                     <Switch checked={settings.enableJavaScript} onChange={() => handleToggle('enableJavaScript')} />
                   </div>
@@ -360,18 +360,18 @@ export function SettingsPage() {
 
               {selectedTab === 'notifications' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Notification Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.notificationSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Enable notifications</span>
-                      <span className={styles.settingDescription}>Show desktop notifications for new articles</span>
+                      <span>{t('settings.enableNotifications')}</span>
+                      <span className={styles.settingDescription}>{t('settings.enableNotificationsDesc')}</span>
                     </div>
                     <Switch checked={settings.enableNotifications} onChange={() => handleToggle('enableNotifications')} />
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Play sound</span>
-                      <span className={styles.settingDescription}>Play sound when new articles arrive</span>
+                      <span>{t('settings.playSound')}</span>
+                      <span className={styles.settingDescription}>{t('settings.playSoundDesc')}</span>
                     </div>
                     <Switch checked={settings.playSound} onChange={() => handleToggle('playSound')} />
                   </div>
@@ -381,7 +381,7 @@ export function SettingsPage() {
               {selectedTab === 'labels' && (
                 <div className={styles.section}>
                   <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Manage Labels</span>
+                    <span>{t('settings.manageLabels')}</span>
                     <LabelDialog />
                   </div>
 
@@ -408,7 +408,7 @@ export function SettingsPage() {
 
                   {labels.length === 0 && (
                     <div style={{ color: tokens.colorNeutralForeground3, fontSize: '13px' }}>
-                      No labels created yet
+                      {t('settings.noLabelsCreated')}
                     </div>
                   )}
                 </div>
@@ -416,42 +416,42 @@ export function SettingsPage() {
 
               {selectedTab === 'filters' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Create Filter</div>
+                  <div className={styles.sectionTitle}>{t('settings.createFilter')}</div>
 
                   <Input
                     size="small"
-                    placeholder="Filter name"
+                    placeholder={t('settings.filterName')}
                     value={filterName}
                     onChange={(_, data) => setFilterName(data.value)}
                     style={{ marginBottom: '12px' }}
                   />
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '13px' }}>When</span>
+                    <span style={{ fontSize: '13px' }}>{t('settings.when')}</span>
                     <Dropdown
                       size="small"
                       value={filterField}
                       onOptionSelect={(_, data) => setFilterField(data.optionValue || 'title')}
                     >
-                      <Option value="title">Title</Option>
-                      <Option value="author">Author</Option>
-                      <Option value="category">Category</Option>
-                      <Option value="content">Content</Option>
+                      <Option value="title">{t('settings.filterTitle')}</Option>
+                      <Option value="author">{t('settings.filterAuthor')}</Option>
+                      <Option value="category">{t('settings.filterCategory')}</Option>
+                      <Option value="content">{t('settings.filterContent')}</Option>
                     </Dropdown>
                     <Dropdown
                       size="small"
                       value={filterOperator}
                       onOptionSelect={(_, data) => setFilterOperator(data.optionValue || 'contains')}
                     >
-                      <Option value="contains">contains</Option>
-                      <Option value="not_contains">does not contain</Option>
-                      <Option value="equals">equals</Option>
-                      <Option value="starts_with">starts with</Option>
-                      <Option value="regex">matches regex</Option>
+                      <Option value="contains">{t('settings.contains')}</Option>
+                      <Option value="not_contains">{t('settings.notContains')}</Option>
+                      <Option value="equals">{t('settings.equals')}</Option>
+                      <Option value="starts_with">{t('settings.startsWith')}</Option>
+                      <Option value="regex">{t('settings.matchesRegex')}</Option>
                     </Dropdown>
                     <Input
                       size="small"
-                      placeholder="Value"
+                      placeholder={t('settings.filterValue')}
                       value={filterValue}
                       onChange={(_, data) => setFilterValue(data.value)}
                       style={{ flex: 1, minWidth: '120px' }}
@@ -459,15 +459,15 @@ export function SettingsPage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '13px' }}>Then</span>
+                    <span style={{ fontSize: '13px' }}>{t('settings.then')}</span>
                     <Dropdown
                       size="small"
                       value={filterAction}
                       onOptionSelect={(_, data) => setFilterAction(data.optionValue || 'mark_read')}
                     >
-                      <Option value="mark_read">Mark as read</Option>
-                      <Option value="mark_starred">Star</Option>
-                      <Option value="delete">Delete</Option>
+                      <Option value="mark_read">{t('settings.markAsRead')}</Option>
+                      <Option value="mark_starred">{t('settings.starAction')}</Option>
+                      <Option value="delete">{t('settings.deleteAction')}</Option>
                     </Dropdown>
                     <Button
                       size="small"
@@ -486,11 +486,11 @@ export function SettingsPage() {
                         }
                       }}
                     >
-                      Add
+                      {t('settings.addFilter')}
                     </Button>
                   </div>
 
-                  <div className={styles.sectionTitle}>Active Filters</div>
+                  <div className={styles.sectionTitle}>{t('settings.activeFilters')}</div>
 
                   {filters.map(filter => (
                     <div key={filter.id} className={styles.settingRow}>
@@ -519,7 +519,7 @@ export function SettingsPage() {
 
                   {filters.length === 0 && (
                     <div style={{ color: tokens.colorNeutralForeground3, fontSize: '13px' }}>
-                      No filters created yet
+                      {t('settings.noFiltersCreated')}
                     </div>
                   )}
                 </div>
@@ -527,35 +527,35 @@ export function SettingsPage() {
 
               {selectedTab === 'appearance' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Appearance</div>
+                  <div className={styles.sectionTitle}>{t('settings.appearanceTitle')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Theme</span>
-                      <span className={styles.settingDescription}>Application theme</span>
+                      <span>{t('settings.theme')}</span>
+                      <span className={styles.settingDescription}>{t('settings.themeDesc')}</span>
                     </div>
                     <Dropdown
                       size="small"
-                      value={settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System'}
+                      value={settings.theme === 'light' ? t('settings.themeLight') : settings.theme === 'dark' ? t('settings.themeDark') : t('settings.themeSystem')}
                       onOptionSelect={(_, data) => updateSetting('theme', (data.optionValue || 'system') as 'light' | 'dark' | 'system')}
                     >
-                      <Option value="system">System</Option>
-                      <Option value="light">Light</Option>
-                      <Option value="dark">Dark</Option>
+                      <Option value="system">{t('settings.themeSystem')}</Option>
+                      <Option value="light">{t('settings.themeLight')}</Option>
+                      <Option value="dark">{t('settings.themeDark')}</Option>
                     </Dropdown>
                   </div>
 
-                  <div className={styles.sectionTitle}>Font Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.fontSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Font family</span>
-                      <span className={styles.settingDescription}>Font used throughout the app</span>
+                      <span>{t('settings.fontFamily')}</span>
+                      <span className={styles.settingDescription}>{t('settings.fontFamilyDesc')}</span>
                     </div>
                     <Dropdown
                       size="small"
                       value={settings.fontFamily}
                       onOptionSelect={(_, data) => updateSetting('fontFamily', data.optionValue || 'system-ui')}
                     >
-                      <Option value="system-ui">System Default</Option>
+                      <Option value="system-ui">{t('settings.fontSystemDefault')}</Option>
                       <Option value="'Segoe UI', sans-serif">Segoe UI</Option>
                       <Option value="'SF Pro', sans-serif">SF Pro</Option>
                       <Option value="'Noto Sans SC', sans-serif">Noto Sans SC</Option>
@@ -564,8 +564,8 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>UI font size</span>
-                      <span className={styles.settingDescription}>Font size for UI elements</span>
+                      <span>{t('settings.uiFontSize')}</span>
+                      <span className={styles.settingDescription}>{t('settings.uiFontSizeDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.fontSize}
@@ -577,8 +577,8 @@ export function SettingsPage() {
                   </div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Content font size</span>
-                      <span className={styles.settingDescription}>Font size for article content</span>
+                      <span>{t('settings.contentFontSize')}</span>
+                      <span className={styles.settingDescription}>{t('settings.contentFontSizeDesc')}</span>
                     </div>
                     <SpinButton
                       value={settings.contentFontSize}
