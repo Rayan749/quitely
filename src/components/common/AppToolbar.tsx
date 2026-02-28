@@ -38,7 +38,7 @@ export function AppToolbar() {
     updateSetting('theme', next);
   };
 
-  const themeLabel = settings.theme === 'light' ? 'Light' : settings.theme === 'dark' ? 'Dark' : 'System';
+  const themeLabel = settings.theme === 'light' ? t('toolbar.light') : settings.theme === 'dark' ? t('toolbar.dark') : t('toolbar.system');
 
   const handleNewFolder = async () => {
     try {
@@ -105,7 +105,7 @@ export function AppToolbar() {
         if (permissionGranted) {
           sendNotification({
             title: 'Quitely RSS',
-            body: `${totalNew} new article${totalNew > 1 ? 's' : ''} found`,
+            body: t('toolbar.newArticlesFound', { count: totalNew }),
           });
         }
       }
@@ -141,7 +141,7 @@ export function AppToolbar() {
           appearance="subtle"
           icon={<FolderAddRegular />}
           onClick={handleNewFolder}
-          title="New folder"
+          title={t('toolbar.newFolder')}
         >
           {t('toolbar.folder')}
         </Button>
