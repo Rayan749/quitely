@@ -13,6 +13,7 @@ import {
 } from '@fluentui/react-components';
 import { AddRegular } from '@fluentui/react-icons';
 import { useLabelsStore } from '../../stores';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles({
   colorInput: {
@@ -46,6 +47,7 @@ const useStyles = makeStyles({
 
 export function LabelDialog() {
   const styles = useStyles();
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   const [color, setColor] = React.useState('#0078d4');
@@ -82,13 +84,13 @@ export function LabelDialog() {
         icon={<AddRegular />}
         onClick={handleOpen}
         className={styles.addButton}
-        title="Add label"
+        title={t('labelDialog.addLabelTip')}
       />
       <Dialog open={open} onOpenChange={(_, data) => {
         if (!data.open) handleClose();
       }}>
         <DialogSurface>
-          <DialogTitle>Add Label</DialogTitle>
+          <DialogTitle>{t('labelDialog.addLabel')}</DialogTitle>
           <DialogBody>
             <DialogContent>
               <div className={styles.form}>
