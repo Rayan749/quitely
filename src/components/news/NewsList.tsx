@@ -2,6 +2,7 @@ import * as React from 'react';
 import { makeStyles, tokens, Table, TableHeader, TableBody, TableRow, TableCell, TableCellLayout, Button, Badge } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
+import { getDateLocale } from '../../utils/i18nDate';
 import { useNewsStore, useUIStore, useLabelsStore } from '../../stores';
 import type { News } from '../../types';
 
@@ -109,7 +110,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
     if (!dateStr) return '';
     try {
       const date = new Date(dateStr);
-      return date.toLocaleDateString('zh-CN', {
+      return date.toLocaleDateString(getDateLocale(), {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
@@ -134,7 +135,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.title}>News</span>
+          <span className={styles.title}>{t('newsList.news')}</span>
         </div>
         <div className={styles.empty}>
           <GlobeRegular style={{ fontSize: '48px', marginBottom: '16px' }} />

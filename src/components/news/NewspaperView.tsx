@@ -1,6 +1,7 @@
 import { makeStyles, tokens, Button } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, OpenRegular } from '@fluentui/react-icons';
-import { useNewsStore } from '../../stores';
+import { useTranslation } from 'react-i18next';
+import { getDateLocale } from '../../utils/i18nDate';
 import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({
@@ -52,17 +53,18 @@ const useStyles = makeStyles({
 
 export function NewspaperView() {
   const styles = useStyles();
+  const { t } = useTranslation();
   const { news, markStarred, deleteNews } = useNewsStore();
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
     try {
-      return new Date(dateStr).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return new Date(dateStr).toLocaleDateString(getDateLocale(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     } catch { return ''; }
   };
 
   if (news.length === 0) {
-    return <div className={styles.empty}>No articles to display</div>;
+    return <div className={styles.empty}>{t('newspaperView.noArticles')}</div>;
   }
 
   return (
