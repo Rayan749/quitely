@@ -1,5 +1,7 @@
-import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
+import { makeStyles, tokens, Button, Toolbar, ToolbarDivider, SearchBox } from '@fluentui/react-components';
 import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular, TextColumnOneRegular, GridRegular } from '@fluentui/react-icons';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -21,9 +23,12 @@ const useStyles = makeStyles({
 export function AppToolbar() {
   const styles = useStyles();
   const { loadFeeds, selectedFeedId, addFeed } = useFeedStore();
-  const { loadNews } = useNewsStore();
+  const { loadNews, searchNews: doSearch, clearSearch } = useNewsStore();
   const { settings, updateSetting } = useSettingsStore();
   const { contentLayout, setContentLayout } = useUIStore();
+  const { t } = useTranslation();
+  const [searchValue, setSearchValue] = React.useState('');
+  const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleLayoutToggle = () => {
     setContentLayout(contentLayout === 'list' ? 'newspaper' : 'list');
@@ -87,7 +92,7 @@ export function AppToolbar() {
       console.log('Updated feeds:', results);
       loadFeeds();
       if (selectedFeedId) {
-        loadNews({ feedId: selectedFeedId, limit: 100 });
+        loadNews({ feedId: selectedFeedId, limit: 50 });
       }
 
       // Show notification for new articles
@@ -110,6 +115,24 @@ export function AppToolbar() {
     }
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    if (value.trim()) {
+      searchTimeoutRef.current = setTimeout(() => {
+        doSearch(value.trim(), selectedFeedId ?? undefined);
+      }, 300);
+    } else {
+      clearSearch();
+      // Reload current feed's articles
+      if (selectedFeedId) {
+        loadNews({ feedId: selectedFeedId, limit: 50 });
+      }
+    }
+  };
+
   return (
     <div className={styles.toolbar}>
       <Toolbar>
@@ -121,7 +144,7 @@ export function AppToolbar() {
           onClick={handleNewFolder}
           title="New folder"
         >
-          Folder
+          {t('toolbar.folder')}
         </Button>
 
         <ToolbarDivider />
@@ -132,7 +155,7 @@ export function AppToolbar() {
           onClick={handleImportOpml}
           title="Import OPML"
         >
-          Import
+          {t('toolbar.import')}
         </Button>
 
         <Button
@@ -141,7 +164,7 @@ export function AppToolbar() {
           onClick={handleExportOpml}
           title="Export OPML"
         >
-          Export
+          {t('toolbar.export')}
         </Button>
 
         <ToolbarDivider />
@@ -152,8 +175,27 @@ export function AppToolbar() {
           onClick={handleRefresh}
           title="Refresh all feeds"
         >
-          Refresh
+          {t('toolbar.refresh')}
         </Button>
+
+        <ToolbarDivider />
+
+        <SearchBox
+          size="small"
+          placeholder={t('toolbar.search')}
+          value={searchValue}
+          onChange={(_, data) => handleSearchChange(data.value)}
+          dismiss={searchValue ? {
+            onClick: () => {
+              setSearchValue('');
+              clearSearch();
+              if (selectedFeedId) {
+                loadNews({ feedId: selectedFeedId, limit: 50 });
+              }
+            }
+          } : undefined}
+          style={{ width: '200px' }}
+        />
 
         <ToolbarDivider />
 
@@ -163,7 +205,7 @@ export function AppToolbar() {
           onClick={handleLayoutToggle}
           title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
         >
-          {contentLayout === 'list' ? 'List' : 'News'}
+          {contentLayout === 'list' ? t('toolbar.list') : t('toolbar.newspaper')}
         </Button>
 
         <Button

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { makeStyles, tokens, Table, TableHeader, TableBody, TableRow, TableCell, TableCellLayout, Button, Badge } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useNewsStore, useUIStore, useLabelsStore } from '../../stores';
 import type { News } from '../../types';
 
@@ -73,9 +74,10 @@ interface NewsListProps {
 
 export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   const styles = useStyles();
-  const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews } = useNewsStore();
+  const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews, hasMore, loadMore, totalCount } = useNewsStore();
   const { selectedCategory, selectedLabelId } = useUIStore();
   const { labels } = useLabelsStore();
+  const { t } = useTranslation();
 
   const filteredNews = selectedLabelId
     ? news.filter(n => n.labels.includes(selectedLabelId))
@@ -84,7 +86,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   // Load news when feedId changes (only if not in category mode)
   React.useEffect(() => {
     if (feedId !== undefined && !selectedCategory) {
-      loadNews({ feedId, limit: 100 });
+      loadNews({ feedId, limit: 50 });
     }
   }, [feedId, selectedCategory, loadNews]);
 
@@ -122,7 +124,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
     return (
       <div className={styles.container}>
         <div className={styles.empty}>
-          <p>Loading...</p>
+          <p>{t('newsList.loading')}</p>
         </div>
       </div>
     );
@@ -136,8 +138,8 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
         </div>
         <div className={styles.empty}>
           <GlobeRegular style={{ fontSize: '48px', marginBottom: '16px' }} />
-          <p>No articles yet</p>
-          <p style={{ fontSize: '12px' }}>Select a feed to view articles</p>
+          <p>{t('newsList.noArticles')}</p>
+          <p style={{ fontSize: '12px' }}>{t('newsList.selectFeed')}</p>
         </div>
       </div>
     );
@@ -146,7 +148,9 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span className={styles.title}>{filteredNews.length} articles</span>
+        <span className={styles.title}>
+          {totalCount > 0 ? `${news.length} ${t('newsList.of')} ${totalCount} ${t('newsList.articles')}` : `${news.length} ${t('newsList.articles')}`}
+        </span>
       </div>
       <div className={styles.list}>
         <Table size="small">
@@ -227,6 +231,17 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
             ))}
           </TableBody>
         </Table>
+        {hasMore && (
+          <div style={{ padding: '12px', textAlign: 'center' }}>
+            <Button
+              appearance="subtle"
+              onClick={loadMore}
+              disabled={loading}
+            >
+              {t('newsList.loadMore')} ({news.length} {t('newsList.of')} {totalCount})
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

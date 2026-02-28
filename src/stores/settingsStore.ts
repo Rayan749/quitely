@@ -6,6 +6,7 @@ interface AppSettings {
   showSplashScreen: boolean;
   reopenFeedsOnStartup: boolean;
   openTabsNextToCurrent: boolean;
+  language: string;
 
   // System tray
   showTrayIcon: boolean;
@@ -15,6 +16,7 @@ interface AppSettings {
   // Network
   requestTimeout: number;
   concurrentRequests: number;
+  proxyUrl: string;
 
   // Feed
   updateOnStartup: boolean;
@@ -29,6 +31,9 @@ interface AppSettings {
   // Appearance
   theme: 'light' | 'dark' | 'system';
   cleanupDays: number;
+  fontFamily: string;
+  fontSize: number;
+  contentFontSize: number;
 
   // Notifications
   enableNotifications: boolean;
@@ -48,11 +53,13 @@ const defaultSettings: AppSettings = {
   showSplashScreen: true,
   reopenFeedsOnStartup: true,
   openTabsNextToCurrent: true,
+  language: 'en',
   showTrayIcon: true,
   minimizeToTray: false,
   closeToTray: true,
   requestTimeout: 30,
   concurrentRequests: 5,
+  proxyUrl: '',
   updateOnStartup: true,
   autoUpdateInterval: 30,
   markReadOnSelect: true,
@@ -61,6 +68,9 @@ const defaultSettings: AppSettings = {
   enableJavaScript: true,
   theme: 'system' as const,
   cleanupDays: 30,
+  fontFamily: 'system-ui',
+  fontSize: 14,
+  contentFontSize: 16,
   enableNotifications: true,
   playSound: false,
 };
@@ -69,11 +79,13 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   showSplashScreen: 'general.show_splash_screen',
   reopenFeedsOnStartup: 'general.reopen_feeds_on_startup',
   openTabsNextToCurrent: 'general.open_tabs_next_to_current',
+  language: 'general.language',
   showTrayIcon: 'tray.show_icon',
   minimizeToTray: 'tray.minimize_to_tray',
   closeToTray: 'tray.close_to_tray',
   requestTimeout: 'network.request_timeout',
   concurrentRequests: 'network.concurrent_requests',
+  proxyUrl: 'network.proxy_url',
   updateOnStartup: 'feed.update_on_startup',
   autoUpdateInterval: 'feed.auto_update_interval',
   markReadOnSelect: 'feed.mark_read_on_select',
@@ -82,6 +94,9 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   enableJavaScript: 'browser.enable_javascript',
   theme: 'appearance.theme',
   cleanupDays: 'feed.cleanup_days',
+  fontFamily: 'appearance.font_family',
+  fontSize: 'appearance.font_size',
+  contentFontSize: 'appearance.content_font_size',
   enableNotifications: 'notifications.enabled',
   playSound: 'notifications.play_sound',
 };

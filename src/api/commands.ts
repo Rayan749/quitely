@@ -76,6 +76,19 @@ export async function restoreNews(ids: number[]): Promise<void> {
   return invoke('restore_news', { ids });
 }
 
+export async function searchNews(
+  query: string,
+  feedId?: number,
+  limit?: number,
+  offset?: number,
+): Promise<News[]> {
+  return invoke<News[]>('search_news', { query, feedId, limit, offset });
+}
+
+export async function getNewsCount(filter: NewsFilter): Promise<number> {
+  return invoke<number>('get_news_count', { filter });
+}
+
 // Settings commands
 export async function getSetting(key: string): Promise<string | null> {
   return invoke<string | null>('get_setting', { key });
@@ -91,6 +104,10 @@ export async function deleteSetting(key: string): Promise<void> {
 
 export async function getAllSettings(): Promise<[string, string][]> {
   return invoke<[string, string][]>('get_all_settings');
+}
+
+export async function testProxy(proxyUrl: string): Promise<string> {
+  return invoke<string>('test_proxy', { proxyUrl });
 }
 
 // Label commands

@@ -20,6 +20,7 @@ import {
   Option,
 } from '@fluentui/react-components';
 import { SettingsRegular, AddRegular, DeleteRegular } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useSettingsStore, useLabelsStore, useFiltersStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -65,6 +66,7 @@ export function SettingsDialog() {
   const { settings, loading, loadSettings, updateSetting } = useSettingsStore();
   const { labels, loadLabels, addLabel, removeLabel } = useLabelsStore();
   const { filters, loadFilters, addFilter, removeFilter, toggleFilter } = useFiltersStore();
+  const { i18n } = useTranslation();
   const [newLabelName, setNewLabelName] = React.useState('');
   const [newLabelColor, setNewLabelColor] = React.useState('#0078d4');
   const [filterName, setFilterName] = React.useState('');
@@ -125,6 +127,9 @@ export function SettingsDialog() {
                   <Tab value="filters" id="filters">
                     Filters
                   </Tab>
+                  <Tab value="appearance" id="appearance">
+                    Appearance
+                  </Tab>
                 </TabList>
 
                 <div className={styles.tabContent}>
@@ -151,6 +156,24 @@ export function SettingsDialog() {
                           <span className={styles.settingDescription}>New tabs open next to the current tab</span>
                         </div>
                         <Switch checked={settings.openTabsNextToCurrent} onChange={() => handleToggle('openTabsNextToCurrent')} />
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Language</span>
+                          <span className={styles.settingDescription}>Application language</span>
+                        </div>
+                        <Dropdown
+                          size="small"
+                          value={settings.language === 'zh' ? '中文' : 'English'}
+                          onOptionSelect={(_, data) => {
+                            const lang = data.optionValue || 'en';
+                            updateSetting('language', lang);
+                            i18n.changeLanguage(lang);
+                          }}
+                        >
+                          <Option value="en">English</Option>
+                          <Option value="zh">中文</Option>
+                        </Dropdown>
                       </div>
                     </div>
                   )}
@@ -209,6 +232,19 @@ export function SettingsDialog() {
                           max={20}
                           step={1}
                           onChange={(_, data) => updateSetting('concurrentRequests', parseInt(String(data.value), 10) || 5)}
+                        />
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Proxy URL</span>
+                          <span className={styles.settingDescription}>HTTP/HTTPS/SOCKS5 proxy (e.g., socks5://127.0.0.1:1080)</span>
+                        </div>
+                        <Input
+                          size="small"
+                          value={settings.proxyUrl}
+                          placeholder="Leave empty for direct connection"
+                          onChange={(_, data) => updateSetting('proxyUrl', data.value)}
+                          style={{ width: '250px' }}
                         />
                       </div>
                     </div>
@@ -475,6 +511,55 @@ export function SettingsDialog() {
                           No filters created yet
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {selectedTab === 'appearance' && (
+                    <div className={styles.section}>
+                      <div className={styles.sectionTitle}>Font Settings</div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Font family</span>
+                          <span className={styles.settingDescription}>Font used throughout the app</span>
+                        </div>
+                        <Dropdown
+                          size="small"
+                          value={settings.fontFamily}
+                          onOptionSelect={(_, data) => updateSetting('fontFamily', data.optionValue || 'system-ui')}
+                        >
+                          <Option value="system-ui">System Default</Option>
+                          <Option value="'Segoe UI', sans-serif">Segoe UI</Option>
+                          <Option value="'SF Pro', sans-serif">SF Pro</Option>
+                          <Option value="'Noto Sans SC', sans-serif">Noto Sans SC</Option>
+                          <Option value="monospace">Monospace</Option>
+                        </Dropdown>
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>UI font size</span>
+                          <span className={styles.settingDescription}>Font size for UI elements</span>
+                        </div>
+                        <SpinButton
+                          value={settings.fontSize}
+                          min={10}
+                          max={24}
+                          step={1}
+                          onChange={(_, data) => updateSetting('fontSize', parseInt(String(data.value), 10) || 14)}
+                        />
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Content font size</span>
+                          <span className={styles.settingDescription}>Font size for article content</span>
+                        </div>
+                        <SpinButton
+                          value={settings.contentFontSize}
+                          min={12}
+                          max={32}
+                          step={1}
+                          onChange={(_, data) => updateSetting('contentFontSize', parseInt(String(data.value), 10) || 16)}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

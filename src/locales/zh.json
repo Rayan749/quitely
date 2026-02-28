@@ -1,0 +1,63 @@
+{
+  "sidebar": {
+    "categories": "分类",
+    "unread": "未读",
+    "starred": "收藏",
+    "deleted": "已删除",
+    "labels": "标签",
+    "noLabels": "暂无标签"
+  },
+  "toolbar": {
+    "import": "导入",
+    "export": "导出",
+    "refresh": "刷新",
+    "settings": "设置",
+    "folder": "文件夹",
+    "search": "搜索文章...",
+    "list": "列表",
+    "newspaper": "报纸"
+  },
+  "feedTree": {
+    "empty": "暂无订阅源，点击「添加订阅」开始。",
+    "rename": "重命名",
+    "delete": "删除"
+  },
+  "newsList": {
+    "articles": "篇文章",
+    "of": "/",
+    "loadMore": "加载更多",
+    "noArticles": "暂无文章",
+    "selectFeed": "选择一个订阅源来查看文章",
+    "loading": "加载中..."
+  },
+  "contentViewer": {
+    "selectArticle": "选择一篇文章阅读",
+    "star": "收藏",
+    "starred": "已收藏",
+    "delete": "删除",
+    "open": "打开",
+    "labels": "标签",
+    "noContent": "暂无内容"
+  },
+  "addFeed": {
+    "title": "添加订阅",
+    "urlPlaceholder": "输入订阅源URL",
+    "preview": "预览",
+    "add": "添加",
+    "cancel": "取消"
+  },
+  "settings": {
+    "title": "设置",
+    "close": "关闭",
+    "general": "通用",
+    "tray": "系统托盘",
+    "network": "网络",
+    "feed": "订阅",
+    "browser": "浏览器",
+    "notifications": "通知",
+    "labels": "标签",
+    "filters": "过滤器",
+    "appearance": "外观",
+    "language": "语言"
+  }
+}

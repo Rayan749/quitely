@@ -47,6 +47,8 @@ pub fn run() {
             commands::delete_news,
             commands::restore_news,
             commands::cleanup_deleted_news,
+            commands::search_news,
+            commands::get_news_count,
             commands::get_labels,
             commands::create_label,
             commands::update_label,
@@ -60,6 +62,7 @@ pub fn run() {
             commands::set_setting,
             commands::delete_setting,
             commands::get_all_settings,
+            commands::test_proxy,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

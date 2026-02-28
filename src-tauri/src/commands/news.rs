@@ -55,3 +55,21 @@ pub fn cleanup_deleted_news(db: State<'_, DbState>, older_than_days: i64) -> Res
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     crate::db::news::cleanup_deleted(&conn, older_than_days)
 }
+
+#[tauri::command]
+pub fn search_news(
+    db: State<'_, DbState>,
+    query: String,
+    feed_id: Option<i64>,
+    limit: Option<i64>,
+    offset: Option<i64>,
+) -> Result<Vec<News>, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::news::search(&conn, &query, feed_id, limit, offset)
+}
+
+#[tauri::command]
+pub fn get_news_count(db: State<'_, DbState>, filter: NewsFilter) -> Result<i64, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::news::count(&conn, &filter)
+}

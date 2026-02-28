@@ -1,0 +1,63 @@
+{
+  "sidebar": {
+    "categories": "Categories",
+    "unread": "Unread",
+    "starred": "Starred",
+    "deleted": "Deleted",
+    "labels": "Labels",
+    "noLabels": "No labels yet"
+  },
+  "toolbar": {
+    "import": "Import",
+    "export": "Export",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "folder": "Folder",
+    "search": "Search articles...",
+    "list": "List",
+    "newspaper": "News"
+  },
+  "feedTree": {
+    "empty": "No feeds yet. Click \"Add Feed\" to get started.",
+    "rename": "Rename",
+    "delete": "Delete"
+  },
+  "newsList": {
+    "articles": "articles",
+    "of": "of",
+    "loadMore": "Load more",
+    "noArticles": "No articles yet",
+    "selectFeed": "Select a feed to view articles",
+    "loading": "Loading..."
+  },
+  "contentViewer": {
+    "selectArticle": "Select an article to read",
+    "star": "Star",
+    "starred": "Starred",
+    "delete": "Delete",
+    "open": "Open",
+    "labels": "Labels",
+    "noContent": "No content available"
+  },
+  "addFeed": {
+    "title": "Add Feed",
+    "urlPlaceholder": "Enter feed URL",
+    "preview": "Preview",
+    "add": "Add",
+    "cancel": "Cancel"
+  },
+  "settings": {
+    "title": "Settings",
+    "close": "Close",
+    "general": "General",
+    "tray": "System Tray",
+    "network": "Network",
+    "feed": "Feed",
+    "browser": "Browser",
+    "notifications": "Notifications",
+    "labels": "Labels",
+    "filters": "Filters",
+    "appearance": "Appearance",
+    "language": "Language"
+  }
+}
