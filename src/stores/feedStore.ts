@@ -15,6 +15,8 @@ interface FeedState {
   updateFeed: (feed: UpdateFeed) => Promise<void>;
   deleteFeed: (id: number) => Promise<void>;
   updateCounts: (counts: FeedCount[]) => void;
+  moveFeed: (feedId: number, newParentId: number | null) => Promise<void>;
+  markFeedAsRead: (feedId: number) => Promise<void>;
 }
 
 export const useFeedStore = create<FeedState>((set, get) => ({
@@ -65,6 +67,21 @@ export const useFeedStore = create<FeedState>((set, get) => ({
         }
         return feed;
       }),
+    }));
+  },
+
+  moveFeed: async (feedId, newParentId) => {
+    await api.updateFeed({ id: feedId, parentId: newParentId ?? undefined });
+    await get().loadFeeds();
+  },
+
+  markFeedAsRead: async (feedId) => {
+    await api.markAllRead(feedId);
+    // Update unread counts locally
+    set((state) => ({
+      feeds: state.feeds.map((feed) =>
+        feed.id === feedId ? { ...feed, unreadCount: 0, newCount: 0 } : feed
+      ),
     }));
   },
 }));
