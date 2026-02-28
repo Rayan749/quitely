@@ -3,7 +3,6 @@ import {
   makeStyles,
   tokens,
   Dialog,
-  DialogTrigger,
   DialogSurface,
   DialogTitle,
   DialogBody,
@@ -12,6 +11,7 @@ import {
   Button,
   Input,
 } from '@fluentui/react-components';
+import { AddRegular } from '@fluentui/react-icons';
 import { useLabelsStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -36,6 +36,12 @@ const useStyles = makeStyles({
     fontSize: '14px',
     color: tokens.colorNeutralForeground1,
   },
+  addButton: {
+    minWidth: '20px',
+    width: '20px',
+    height: '20px',
+    padding: '0 4px',
+  },
 });
 
 export function LabelDialog() {
@@ -47,10 +53,14 @@ export function LabelDialog() {
 
   const handleSubmit = async () => {
     if (name.trim()) {
-      await addLabel({ name: name.trim(), color });
-      setName('');
-      setColor('#0078d4');
-      setOpen(false);
+      try {
+        await addLabel({ name: name.trim(), color });
+        setName('');
+        setColor('#0078d4');
+        setOpen(false);
+      } catch (error) {
+        console.error('Failed to add label:', error);
+      }
     }
   };
 
@@ -60,53 +70,58 @@ export function LabelDialog() {
     setOpen(false);
   };
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(_, data) => {
-      if (!data.open) handleClose();
-    }}>
-      <DialogTrigger disableButtonEnhancement>
-        <Button
-          appearance="subtle"
-          size="small"
-          style={{ minWidth: '24px', width: '24px', height: '24px', padding: 0 }}
-        >
-          +
-        </Button>
-      </DialogTrigger>
-      <DialogSurface>
-        <DialogTitle>Add Label</DialogTitle>
-        <DialogBody>
-          <DialogContent>
-            <div className={styles.form}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>
-                  Name
-                </label>
-                <Input
-                  placeholder="Label name"
-                  value={name}
-                  onChange={(_, data) => setName(data.value)}
-                  style={{ width: '100%' }}
-                />
+    <>
+      <Button
+        appearance="subtle"
+        size="small"
+        icon={<AddRegular />}
+        onClick={handleOpen}
+        className={styles.addButton}
+        title="Add label"
+      />
+      <Dialog open={open} onOpenChange={(_, data) => {
+        if (!data.open) handleClose();
+      }}>
+        <DialogSurface>
+          <DialogTitle>Add Label</DialogTitle>
+          <DialogBody>
+            <DialogContent>
+              <div className={styles.form}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>
+                    Name
+                  </label>
+                  <Input
+                    placeholder="Label name"
+                    value={name}
+                    onChange={(_, data) => setName(data.value)}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <div className={styles.colorRow}>
+                  <label className={styles.colorLabel}>Color</label>
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    className={styles.colorInput}
+                  />
+                  <span style={{ fontSize: '14px', color: tokens.colorNeutralForeground3 }}>{color}</span>
+                </div>
               </div>
-              <div className={styles.colorRow}>
-                <label className={styles.colorLabel}>Color</label>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className={styles.colorInput}
-                />
-                <span style={{ fontSize: '14px', color: tokens.colorNeutralForeground3 }}>{color}</span>
-              </div>
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button appearance="secondary" onClick={handleClose}>Cancel</Button>
-            <Button appearance="primary" onClick={handleSubmit} disabled={!name.trim()}>Add</Button>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={handleClose}>Cancel</Button>
+              <Button appearance="primary" onClick={handleSubmit} disabled={!name.trim()}>Add</Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    </>
   );
 }
