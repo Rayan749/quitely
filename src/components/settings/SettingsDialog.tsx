@@ -14,9 +14,11 @@ import {
   TabList,
   Switch,
   SpinButton,
+  Input,
+  Badge,
 } from '@fluentui/react-components';
-import { SettingsRegular } from '@fluentui/react-icons';
-import { useSettingsStore } from '../../stores';
+import { SettingsRegular, AddRegular, DeleteRegular } from '@fluentui/react-icons';
+import { useSettingsStore, useLabelsStore } from '../../stores';
 
 const useStyles = makeStyles({
   container: {
@@ -59,12 +61,16 @@ export function SettingsDialog() {
   const [open, setOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState('general');
   const { settings, loading, loadSettings, updateSetting } = useSettingsStore();
+  const { labels, loadLabels, addLabel, removeLabel } = useLabelsStore();
+  const [newLabelName, setNewLabelName] = React.useState('');
+  const [newLabelColor, setNewLabelColor] = React.useState('#0078d4');
 
   React.useEffect(() => {
     if (open) {
       loadSettings();
+      loadLabels();
     }
-  }, [open, loadSettings]);
+  }, [open, loadSettings, loadLabels]);
 
   const handleToggle = (key: keyof typeof settings) => {
     updateSetting(key, !settings[key]);
@@ -103,6 +109,9 @@ export function SettingsDialog() {
                   </Tab>
                   <Tab value="notifications" id="notifications">
                     Notifications
+                  </Tab>
+                  <Tab value="labels" id="labels">
+                    Labels
                   </Tab>
                 </TabList>
 
@@ -283,6 +292,67 @@ export function SettingsDialog() {
                         </div>
                         <Switch checked={settings.playSound} onChange={() => handleToggle('playSound')} />
                       </div>
+                    </div>
+                  )}
+
+                  {selectedTab === 'labels' && (
+                    <div className={styles.section}>
+                      <div className={styles.sectionTitle}>Manage Labels</div>
+
+                      {/* Add new label */}
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <Input
+                          size="small"
+                          placeholder="Label name"
+                          value={newLabelName}
+                          onChange={(_, data) => setNewLabelName(data.value)}
+                        />
+                        <input
+                          type="color"
+                          value={newLabelColor}
+                          onChange={(e) => setNewLabelColor(e.target.value)}
+                          style={{ width: '32px', height: '32px', border: 'none', cursor: 'pointer' }}
+                        />
+                        <Button
+                          size="small"
+                          icon={<AddRegular />}
+                          onClick={async () => {
+                            if (newLabelName.trim()) {
+                              await addLabel({ name: newLabelName.trim(), color: newLabelColor });
+                              setNewLabelName('');
+                            }
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+
+                      {/* Label list */}
+                      {labels.map(label => (
+                        <div key={label.id} className={styles.settingRow}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Badge
+                              size="small"
+                              appearance="filled"
+                              style={{ backgroundColor: label.color || '#0078d4' }}
+                            >
+                              {label.name}
+                            </Badge>
+                          </div>
+                          <Button
+                            size="small"
+                            appearance="subtle"
+                            icon={<DeleteRegular />}
+                            onClick={() => removeLabel(label.id)}
+                          />
+                        </div>
+                      ))}
+
+                      {labels.length === 0 && (
+                        <div style={{ color: tokens.colorNeutralForeground3, fontSize: '13px' }}>
+                          No labels created yet
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
