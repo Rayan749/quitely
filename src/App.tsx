@@ -6,6 +6,7 @@ import { useFeedStore, useNewsStore, useUIStore, useSettingsStore, useLabelsStor
 import { useKeyboardShortcuts, useTrayEvents } from './hooks';
 import { cleanupDeletedNews } from './api/commands';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const { loadFeeds, selectedFeedId, selectFeed } = useFeedStore();
@@ -13,6 +14,7 @@ function App() {
   const { selectedCategory, selectCategory, selectedLabelId, selectLabel, contentLayout } = useUIStore();
   const { settings, loadSettings } = useSettingsStore();
   const { loadLabels } = useLabelsStore();
+  const { i18n } = useTranslation();
 
   useKeyboardShortcuts();
   useTrayEvents();
@@ -29,6 +31,12 @@ function App() {
       cleanupDeletedNews(settings.cleanupDays).catch(console.error);
     }
   }, [settings.cleanupDays]);
+
+  useEffect(() => {
+    if (settings.language && settings.language !== i18n.language) {
+      i18n.changeLanguage(settings.language);
+    }
+  }, [settings.language, i18n]);
 
   // When a label is selected, load all articles and filter by label
   useEffect(() => {

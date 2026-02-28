@@ -20,6 +20,7 @@ import {
   Option,
 } from '@fluentui/react-components';
 import { SettingsRegular, AddRegular, DeleteRegular } from '@fluentui/react-icons';
+import { useTranslation } from 'react-i18next';
 import { useSettingsStore, useLabelsStore, useFiltersStore } from '../../stores';
 
 const useStyles = makeStyles({
@@ -65,6 +66,7 @@ export function SettingsDialog() {
   const { settings, loading, loadSettings, updateSetting } = useSettingsStore();
   const { labels, loadLabels, addLabel, removeLabel } = useLabelsStore();
   const { filters, loadFilters, addFilter, removeFilter, toggleFilter } = useFiltersStore();
+  const { i18n } = useTranslation();
   const [newLabelName, setNewLabelName] = React.useState('');
   const [newLabelColor, setNewLabelColor] = React.useState('#0078d4');
   const [filterName, setFilterName] = React.useState('');
@@ -154,6 +156,24 @@ export function SettingsDialog() {
                           <span className={styles.settingDescription}>New tabs open next to the current tab</span>
                         </div>
                         <Switch checked={settings.openTabsNextToCurrent} onChange={() => handleToggle('openTabsNextToCurrent')} />
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Language</span>
+                          <span className={styles.settingDescription}>Application language</span>
+                        </div>
+                        <Dropdown
+                          size="small"
+                          value={settings.language === 'zh' ? '中文' : 'English'}
+                          onOptionSelect={(_, data) => {
+                            const lang = data.optionValue || 'en';
+                            updateSetting('language', lang);
+                            i18n.changeLanguage(lang);
+                          }}
+                        >
+                          <Option value="en">English</Option>
+                          <Option value="zh">中文</Option>
+                        </Dropdown>
                       </div>
                     </div>
                   )}

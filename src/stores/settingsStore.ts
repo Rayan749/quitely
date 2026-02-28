@@ -6,6 +6,7 @@ interface AppSettings {
   showSplashScreen: boolean;
   reopenFeedsOnStartup: boolean;
   openTabsNextToCurrent: boolean;
+  language: string;
 
   // System tray
   showTrayIcon: boolean;
@@ -52,6 +53,7 @@ const defaultSettings: AppSettings = {
   showSplashScreen: true,
   reopenFeedsOnStartup: true,
   openTabsNextToCurrent: true,
+  language: 'en',
   showTrayIcon: true,
   minimizeToTray: false,
   closeToTray: true,
@@ -77,6 +79,7 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   showSplashScreen: 'general.show_splash_screen',
   reopenFeedsOnStartup: 'general.reopen_feeds_on_startup',
   openTabsNextToCurrent: 'general.open_tabs_next_to_current',
+  language: 'general.language',
   showTrayIcon: 'tray.show_icon',
   minimizeToTray: 'tray.minimize_to_tray',
   closeToTray: 'tray.close_to_tray',
