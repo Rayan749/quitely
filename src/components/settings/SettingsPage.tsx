@@ -165,16 +165,16 @@ export function SettingsPage() {
 
         <div className={styles.mainContent}>
           {loading ? (
-            <div>Loading...</div>
+            <div>{t('settings.loading')}</div>
           ) : (
             <>
               {selectedTab === 'general' && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>General Settings</div>
+                  <div className={styles.sectionTitle}>{t('settings.generalSettings')}</div>
                   <div className={styles.settingRow}>
                     <div className={styles.settingLabel}>
-                      <span>Show splash screen</span>
-                      <span className={styles.settingDescription}>Display splash screen on startup</span>
+                      <span>{t('settings.showSplash')}</span>
+                      <span className={styles.settingDescription}>{t('settings.showSplashDesc')}</span>
                     </div>
                     <Switch checked={settings.showSplashScreen} onChange={() => handleToggle('showSplashScreen')} />
                   </div>
