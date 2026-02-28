@@ -1,5 +1,5 @@
-import { makeStyles, tokens, Divider } from '@fluentui/react-components';
-import { MailUnreadFilled, StarFilled, DeleteFilled } from '@fluentui/react-icons';
+import { makeStyles, tokens, Divider, Button } from '@fluentui/react-components';
+import { MailUnreadFilled, StarFilled, DeleteFilled, SettingsRegular } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useUIStore, useLabelsStore, useFeedStore } from '../../stores';
 import type { Feed } from '../../types';
@@ -18,6 +18,10 @@ const useStyles = makeStyles({
     flex: 1,
     overflowY: 'auto',
     overflowX: 'hidden',
+  },
+  footer: {
+    padding: '8px',
+    borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   section: {
     padding: '8px 0',
@@ -129,6 +133,7 @@ export function Sidebar() {
     selectCategory,
     selectedLabelId,
     selectLabel,
+    setSettingsPageOpen,
   } = useUIStore();
   const { labels } = useLabelsStore();
   const { feeds, selectedFeedId, selectFeed } = useFeedStore();
@@ -250,6 +255,17 @@ export function Sidebar() {
               {t('sidebar.noLabels', '暂无标签')}
             </div>
           )}
+        </div>
+
+        <div className={styles.footer}>
+          <Button
+            appearance="subtle"
+            icon={<SettingsRegular />}
+            onClick={() => setSettingsPageOpen(true)}
+            style={{ width: '100%', justifyContent: 'flex-start' }}
+          >
+            {t('sidebar.settings', '设置')}
+          </Button>
         </div>
       </div>
     </nav>

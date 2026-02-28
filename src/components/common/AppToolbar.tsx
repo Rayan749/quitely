@@ -3,7 +3,6 @@ import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRe
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AddFeedDialog } from '../feeds';
-import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
@@ -216,10 +215,6 @@ export function AppToolbar() {
         >
           {themeLabel}
         </Button>
-
-        <ToolbarDivider />
-
-        <SettingsDialog />
       </Toolbar>
     </div>
   );

@@ -1,6 +1,7 @@
 import { Layout, AppToolbar } from './components/common';
 import { NewsList, NewspaperView } from './components/news';
 import { ContentViewer } from './components/content';
+import { SettingsPage } from './components/settings';
 import { useFeedStore, useNewsStore, useUIStore, useSettingsStore, useLabelsStore } from './stores';
 import { useKeyboardShortcuts, useTrayEvents } from './hooks';
 import { cleanupDeletedNews } from './api/commands';
@@ -10,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 function App() {
   const { loadFeeds, selectedFeedId, selectFeed } = useFeedStore();
   const { clearNews, loadNews } = useNewsStore();
-  const { selectedCategory, selectCategory, selectedLabelId, selectLabel, contentLayout } = useUIStore();
+  const { selectedCategory, selectCategory, selectedLabelId, selectLabel, contentLayout, settingsPageOpen } = useUIStore();
   const { settings, loadSettings } = useSettingsStore();
   const { loadLabels } = useLabelsStore();
   const { i18n } = useTranslation();
@@ -72,21 +73,27 @@ function App() {
 
   return (
     <Layout>
-      <AppToolbar />
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {contentLayout === 'newspaper' ? (
-          <NewspaperView />
-        ) : (
-          <>
-            <div style={{ width: '350px', minWidth: '300px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
-              <NewsList feedId={selectedFeedId ?? undefined} />
-            </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <ContentViewer />
-            </div>
-          </>
-        )}
-      </div>
+      {settingsPageOpen ? (
+        <SettingsPage />
+      ) : (
+        <>
+          <AppToolbar />
+          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            {contentLayout === 'newspaper' ? (
+              <NewspaperView />
+            ) : (
+              <>
+                <div style={{ width: '350px', minWidth: '300px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
+                  <NewsList feedId={selectedFeedId ?? undefined} />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <ContentViewer />
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </Layout>
   );
 }

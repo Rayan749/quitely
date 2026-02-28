@@ -16,6 +16,9 @@ interface UIState {
   // Label filter
   selectedLabelId: number | null;
 
+  // Settings page
+  settingsPageOpen: boolean;
+
   // Actions
   toggleCategoriesPanel: () => void;
   setFeedTreeWidth: (width: number) => void;
@@ -23,6 +26,7 @@ interface UIState {
   setContentLayout: (layout: 'list' | 'newspaper') => void;
   selectCategory: (category: 'unread' | 'starred' | 'deleted' | null) => void;
   selectLabel: (id: number | null) => void;
+  setSettingsPageOpen: (open: boolean) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -34,6 +38,7 @@ export const useUIStore = create<UIState>()(
       contentLayout: 'list',
       selectedCategory: null,
       selectedLabelId: null,
+      settingsPageOpen: false,
 
       toggleCategoriesPanel: () =>
         set((state) => ({ categoriesPanelVisible: !state.categoriesPanelVisible })),
@@ -47,6 +52,8 @@ export const useUIStore = create<UIState>()(
       selectCategory: (category) => set({ selectedCategory: category }),
 
       selectLabel: (id) => set({ selectedLabelId: id }),
+
+      setSettingsPageOpen: (open) => set({ settingsPageOpen: open }),
     }),
     {
       name: 'quitely-ui-settings',
