@@ -47,6 +47,8 @@ pub fn run() {
             commands::delete_news,
             commands::restore_news,
             commands::cleanup_deleted_news,
+            commands::search_news,
+            commands::get_news_count,
             commands::get_labels,
             commands::create_label,
             commands::update_label,
