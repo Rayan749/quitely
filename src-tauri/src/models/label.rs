@@ -5,6 +5,7 @@ pub struct Label {
     pub id: i64,
     pub name: String,
     pub color: Option<String>,
+    #[serde(rename = "sortOrder")]
     pub sort_order: i64,
 }
 
@@ -15,6 +16,7 @@ pub struct CreateLabel {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateLabel {
     pub id: i64,
     pub name: Option<String>,

@@ -24,6 +24,7 @@ pub struct News {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NewsFilter {
     pub feed_id: Option<i64>,
     pub unread_only: bool,
@@ -34,6 +35,7 @@ pub struct NewsFilter {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct NewsUpdate {
     pub ids: Vec<i64>,
     pub is_read: Option<bool>,

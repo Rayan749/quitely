@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Filter {
     pub id: i64,
     pub name: String,
@@ -13,6 +14,7 @@ pub struct Filter {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FilterCondition {
     pub id: i64,
     pub filter_id: i64,
@@ -22,6 +24,7 @@ pub struct FilterCondition {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FilterAction {
     pub id: i64,
     pub filter_id: i64,
@@ -30,6 +33,7 @@ pub struct FilterAction {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateFilter {
     pub name: String,
     pub feed_ids: Vec<i64>,
@@ -39,6 +43,7 @@ pub struct CreateFilter {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateFilterCondition {
     pub field: String,
     pub operator: String,
@@ -46,6 +51,7 @@ pub struct CreateFilterCondition {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateFilterAction {
     pub action: String,
     pub params: Option<String>,
