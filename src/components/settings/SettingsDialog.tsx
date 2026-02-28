@@ -125,6 +125,9 @@ export function SettingsDialog() {
                   <Tab value="filters" id="filters">
                     Filters
                   </Tab>
+                  <Tab value="appearance" id="appearance">
+                    Appearance
+                  </Tab>
                 </TabList>
 
                 <div className={styles.tabContent}>
@@ -488,6 +491,55 @@ export function SettingsDialog() {
                           No filters created yet
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {selectedTab === 'appearance' && (
+                    <div className={styles.section}>
+                      <div className={styles.sectionTitle}>Font Settings</div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Font family</span>
+                          <span className={styles.settingDescription}>Font used throughout the app</span>
+                        </div>
+                        <Dropdown
+                          size="small"
+                          value={settings.fontFamily}
+                          onOptionSelect={(_, data) => updateSetting('fontFamily', data.optionValue || 'system-ui')}
+                        >
+                          <Option value="system-ui">System Default</Option>
+                          <Option value="'Segoe UI', sans-serif">Segoe UI</Option>
+                          <Option value="'SF Pro', sans-serif">SF Pro</Option>
+                          <Option value="'Noto Sans SC', sans-serif">Noto Sans SC</Option>
+                          <Option value="monospace">Monospace</Option>
+                        </Dropdown>
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>UI font size</span>
+                          <span className={styles.settingDescription}>Font size for UI elements</span>
+                        </div>
+                        <SpinButton
+                          value={settings.fontSize}
+                          min={10}
+                          max={24}
+                          step={1}
+                          onChange={(_, data) => updateSetting('fontSize', parseInt(String(data.value), 10) || 14)}
+                        />
+                      </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Content font size</span>
+                          <span className={styles.settingDescription}>Font size for article content</span>
+                        </div>
+                        <SpinButton
+                          value={settings.contentFontSize}
+                          min={12}
+                          max={32}
+                          step={1}
+                          onChange={(_, data) => updateSetting('contentFontSize', parseInt(String(data.value), 10) || 16)}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

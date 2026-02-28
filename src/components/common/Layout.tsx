@@ -49,7 +49,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
-      <div className={styles.root}>
+      <div className={styles.root} style={{ fontFamily: settings.fontFamily, fontSize: `${settings.fontSize}px` }}>
         <Sidebar />
         <div className={styles.main}>
           {children}

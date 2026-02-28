@@ -1,6 +1,6 @@
 import { makeStyles, tokens, Button, Link, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, Badge } from '@fluentui/react-components';
 import { OpenRegular, StarFilled, StarRegular, DeleteRegular, GlobeRegular, TagRegular } from '@fluentui/react-icons';
-import { useNewsStore, useLabelsStore } from '../../stores';
+import { useNewsStore, useLabelsStore, useSettingsStore } from '../../stores';
 import DOMPurify from 'dompurify';
 
 const useStyles = makeStyles({
@@ -98,6 +98,7 @@ export function ContentViewer() {
   const styles = useStyles();
   const { news, selectedNewsId, markStarred, deleteNews, loadNews, filter } = useNewsStore();
   const { labels, setArticleLabels } = useLabelsStore();
+  const { settings } = useSettingsStore();
 
   const selectedNews = news.find(n => n.id === selectedNewsId);
 
@@ -266,7 +267,7 @@ export function ContentViewer() {
         </div>
       )}
 
-      <div className={styles.content}>
+      <div className={styles.content} style={{ fontFamily: settings.fontFamily, fontSize: `${settings.contentFontSize}px` }}>
         <div
           className={styles.articleContent}
           dangerouslySetInnerHTML={{

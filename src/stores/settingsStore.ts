@@ -30,6 +30,9 @@ interface AppSettings {
   // Appearance
   theme: 'light' | 'dark' | 'system';
   cleanupDays: number;
+  fontFamily: string;
+  fontSize: number;
+  contentFontSize: number;
 
   // Notifications
   enableNotifications: boolean;
@@ -63,6 +66,9 @@ const defaultSettings: AppSettings = {
   enableJavaScript: true,
   theme: 'system' as const,
   cleanupDays: 30,
+  fontFamily: 'system-ui',
+  fontSize: 14,
+  contentFontSize: 16,
   enableNotifications: true,
   playSound: false,
 };
@@ -85,6 +91,9 @@ const settingKeyMap: Record<keyof AppSettings, string> = {
   enableJavaScript: 'browser.enable_javascript',
   theme: 'appearance.theme',
   cleanupDays: 'feed.cleanup_days',
+  fontFamily: 'appearance.font_family',
+  fontSize: 'appearance.font_size',
+  contentFontSize: 'appearance.content_font_size',
   enableNotifications: 'notifications.enabled',
   playSound: 'notifications.play_sound',
 };
