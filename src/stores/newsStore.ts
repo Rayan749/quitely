@@ -8,9 +8,12 @@ interface NewsState {
   loading: boolean;
   error: string | null;
   filter: NewsFilter;
+  searchQuery: string;
 
   // Actions
   loadNews: (filter: NewsFilter) => Promise<void>;
+  searchNews: (query: string, feedId?: number) => Promise<void>;
+  clearSearch: () => void;
   selectNews: (id: number | null) => void;
   markRead: (ids: number[]) => Promise<void>;
   markStarred: (ids: number[], starred: boolean) => Promise<void>;
@@ -34,15 +37,30 @@ export const useNewsStore = create<NewsState>((set, get) => ({
     limit: 100,
     offset: 0,
   },
+  searchQuery: '',
 
   loadNews: async (filter: NewsFilter) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, searchQuery: '' });
     try {
       const news = await api.getNews(filter);
       set({ news, loading: false });
     } catch (error) {
       set({ error: String(error), loading: false });
     }
+  },
+
+  searchNews: async (query, feedId) => {
+    set({ loading: true, error: null, searchQuery: query });
+    try {
+      const news = await api.searchNews(query, feedId, 100);
+      set({ news, loading: false });
+    } catch (error) {
+      set({ error: String(error), loading: false });
+    }
+  },
+
+  clearSearch: () => {
+    set({ searchQuery: '' });
   },
 
   selectNews: (id) => {

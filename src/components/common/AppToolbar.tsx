@@ -1,5 +1,6 @@
-import { makeStyles, tokens, Button, Toolbar, ToolbarDivider } from '@fluentui/react-components';
+import { makeStyles, tokens, Button, Toolbar, ToolbarDivider, SearchBox } from '@fluentui/react-components';
 import { ArrowSyncFilled, ArrowDownloadFilled, ArrowUploadFilled, WeatherSunnyRegular, WeatherMoonRegular, FolderAddRegular, TextColumnOneRegular, GridRegular } from '@fluentui/react-icons';
+import * as React from 'react';
 import { AddFeedDialog } from '../feeds';
 import { SettingsDialog } from '../settings';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -21,9 +22,11 @@ const useStyles = makeStyles({
 export function AppToolbar() {
   const styles = useStyles();
   const { loadFeeds, selectedFeedId, addFeed } = useFeedStore();
-  const { loadNews } = useNewsStore();
+  const { loadNews, searchNews: doSearch, clearSearch } = useNewsStore();
   const { settings, updateSetting } = useSettingsStore();
   const { contentLayout, setContentLayout } = useUIStore();
+  const [searchValue, setSearchValue] = React.useState('');
+  const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleLayoutToggle = () => {
     setContentLayout(contentLayout === 'list' ? 'newspaper' : 'list');
@@ -110,6 +113,24 @@ export function AppToolbar() {
     }
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    if (value.trim()) {
+      searchTimeoutRef.current = setTimeout(() => {
+        doSearch(value.trim(), selectedFeedId ?? undefined);
+      }, 300);
+    } else {
+      clearSearch();
+      // Reload current feed's articles
+      if (selectedFeedId) {
+        loadNews({ feedId: selectedFeedId, limit: 100 });
+      }
+    }
+  };
+
   return (
     <div className={styles.toolbar}>
       <Toolbar>
@@ -154,6 +175,25 @@ export function AppToolbar() {
         >
           Refresh
         </Button>
+
+        <ToolbarDivider />
+
+        <SearchBox
+          size="small"
+          placeholder="Search articles..."
+          value={searchValue}
+          onChange={(_, data) => handleSearchChange(data.value)}
+          dismiss={searchValue ? {
+            onClick: () => {
+              setSearchValue('');
+              clearSearch();
+              if (selectedFeedId) {
+                loadNews({ feedId: selectedFeedId, limit: 100 });
+              }
+            }
+          } : undefined}
+          style={{ width: '200px' }}
+        />
 
         <ToolbarDivider />
 
