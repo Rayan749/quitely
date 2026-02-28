@@ -73,3 +73,15 @@ pub fn get_news_count(db: State<'_, DbState>, filter: NewsFilter) -> Result<i64,
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     crate::db::news::count(&conn, &filter)
 }
+
+#[tauri::command]
+pub fn get_all_news(db: State<'_, DbState>) -> Result<Vec<News>, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::news::get_all(&conn)
+}
+
+#[tauri::command]
+pub fn purge_news(db: State<'_, DbState>, ids: Vec<i64>) -> Result<(), String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::news::delete_permanently(&conn, &ids)
+}

@@ -7,4 +7,3 @@ pub mod schema;
 pub mod settings;
 
 pub use connection::*;
-pub use schema::*;

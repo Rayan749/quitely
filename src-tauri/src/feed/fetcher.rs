@@ -41,6 +41,7 @@ impl FeedFetcher {
         }
     }
 
+    /// Create a FeedFetcher with optional proxy support
     pub fn with_proxy(proxy_url: &str) -> Result<Self, String> {
         let proxy = reqwest::Proxy::all(proxy_url).map_err(|e| e.to_string())?;
         let client = Client::builder()
@@ -50,6 +51,14 @@ impl FeedFetcher {
             .build()
             .map_err(|e| e.to_string())?;
         Ok(Self { client })
+    }
+
+    /// Create a FeedFetcher, optionally with proxy from settings
+    pub fn create(proxy_url: Option<&str>) -> Result<Self, String> {
+        match proxy_url {
+            Some(url) if !url.is_empty() => Self::with_proxy(url),
+            _ => Ok(Self::new()),
+        }
     }
 
     pub async fn fetch_and_parse(&self, url: &str) -> Result<ParsedFeed, String> {

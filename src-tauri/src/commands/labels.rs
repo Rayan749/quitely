@@ -9,6 +9,12 @@ pub fn get_labels(db: State<'_, DbState>) -> Result<Vec<Label>, String> {
 }
 
 #[tauri::command]
+pub fn get_label(db: State<'_, DbState>, id: i64) -> Result<Option<Label>, String> {
+    let conn = db.0.lock().map_err(|e| e.to_string())?;
+    crate::db::labels::get_by_id(&conn, id)
+}
+
+#[tauri::command]
 pub fn create_label(db: State<'_, DbState>, label: CreateLabel) -> Result<i64, String> {
     let conn = db.0.lock().map_err(|e| e.to_string())?;
     crate::db::labels::create(&conn, &label)
