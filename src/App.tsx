@@ -2,21 +2,31 @@ import { Layout, AppToolbar } from './components/common';
 import { FeedTree } from './components/feeds';
 import { NewsList, NewspaperView } from './components/news';
 import { ContentViewer } from './components/content';
-import { useFeedStore, useNewsStore, useUIStore } from './stores';
+import { useFeedStore, useNewsStore, useUIStore, useSettingsStore } from './stores';
 import { useKeyboardShortcuts, useTrayEvents } from './hooks';
+import { cleanupDeletedNews } from './api/commands';
 import { useEffect } from 'react';
 
 function App() {
   const { loadFeeds, selectedFeedId, selectFeed } = useFeedStore();
   const { clearNews, loadNews } = useNewsStore();
   const { selectedCategory, selectCategory, contentLayout } = useUIStore();
+  const { settings, loadSettings } = useSettingsStore();
 
   useKeyboardShortcuts();
   useTrayEvents();
 
   useEffect(() => {
     loadFeeds();
-  }, [loadFeeds]);
+    loadSettings();
+  }, [loadFeeds, loadSettings]);
+
+  useEffect(() => {
+    // Cleanup deleted articles on startup
+    if (settings.cleanupDays > 0) {
+      cleanupDeletedNews(settings.cleanupDays).catch(console.error);
+    }
+  }, [settings.cleanupDays]);
 
   // When a category is selected, clear feed selection and load with filter
   useEffect(() => {

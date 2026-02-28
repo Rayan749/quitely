@@ -223,6 +223,19 @@ export function SettingsDialog() {
                         </div>
                         <Switch checked={settings.markReadOnSelect} onChange={() => handleToggle('markReadOnSelect')} />
                       </div>
+                      <div className={styles.settingRow}>
+                        <div className={styles.settingLabel}>
+                          <span>Cleanup deleted articles (days)</span>
+                          <span className={styles.settingDescription}>Permanently delete articles older than this many days</span>
+                        </div>
+                        <SpinButton
+                          value={settings.cleanupDays}
+                          min={1}
+                          max={365}
+                          step={1}
+                          onChange={(_, data) => updateSetting('cleanupDays', parseInt(String(data.value), 10) || 30)}
+                        />
+                      </div>
                     </div>
                   )}
 
