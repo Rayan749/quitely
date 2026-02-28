@@ -1,6 +1,6 @@
-import { makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
+import { makeStyles, tokens, mergeClasses, Badge } from '@fluentui/react-components';
 import { MailUnreadFilled, StarFilled, DeleteFilled } from '@fluentui/react-icons';
-import { useUIStore } from '../../stores';
+import { useUIStore, useLabelsStore } from '../../stores';
 
 const useStyles = makeStyles({
   sidebar: {
@@ -44,7 +44,8 @@ const useStyles = makeStyles({
 
 export function Sidebar() {
   const styles = useStyles();
-  const { categoriesPanelVisible, selectedCategory, selectCategory } = useUIStore();
+  const { categoriesPanelVisible, selectedCategory, selectCategory, selectedLabelId, selectLabel } = useUIStore();
+  const { labels } = useLabelsStore();
 
   if (!categoriesPanelVisible) {
     return null;
@@ -81,9 +82,27 @@ export function Sidebar() {
         </div>
 
         <div className={styles.sectionTitle}>Labels</div>
-        <div style={{ padding: '4px 12px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-          No labels yet
-        </div>
+        {labels.map(label => (
+          <div
+            key={label.id}
+            className={mergeClasses(styles.categoryItem, selectedLabelId === label.id ? styles.selected : '')}
+            onClick={() => selectLabel(selectedLabelId === label.id ? null : label.id)}
+          >
+            <Badge
+              size="tiny"
+              appearance="filled"
+              style={{ backgroundColor: label.color || '#0078d4' }}
+            >
+              &nbsp;
+            </Badge>
+            <span>{label.name}</span>
+          </div>
+        ))}
+        {labels.length === 0 && (
+          <div style={{ padding: '4px 12px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+            No labels yet
+          </div>
+        )}
       </div>
     </aside>
   );

@@ -2,7 +2,7 @@ import { Layout, AppToolbar } from './components/common';
 import { FeedTree } from './components/feeds';
 import { NewsList, NewspaperView } from './components/news';
 import { ContentViewer } from './components/content';
-import { useFeedStore, useNewsStore, useUIStore, useSettingsStore } from './stores';
+import { useFeedStore, useNewsStore, useUIStore, useSettingsStore, useLabelsStore } from './stores';
 import { useKeyboardShortcuts, useTrayEvents } from './hooks';
 import { cleanupDeletedNews } from './api/commands';
 import { useEffect } from 'react';
@@ -10,8 +10,9 @@ import { useEffect } from 'react';
 function App() {
   const { loadFeeds, selectedFeedId, selectFeed } = useFeedStore();
   const { clearNews, loadNews } = useNewsStore();
-  const { selectedCategory, selectCategory, contentLayout } = useUIStore();
+  const { selectedCategory, selectCategory, selectedLabelId, selectLabel, contentLayout } = useUIStore();
   const { settings, loadSettings } = useSettingsStore();
+  const { loadLabels } = useLabelsStore();
 
   useKeyboardShortcuts();
   useTrayEvents();
@@ -19,7 +20,8 @@ function App() {
   useEffect(() => {
     loadFeeds();
     loadSettings();
-  }, [loadFeeds, loadSettings]);
+    loadLabels();
+  }, [loadFeeds, loadSettings, loadLabels]);
 
   useEffect(() => {
     // Cleanup deleted articles on startup
@@ -28,10 +30,20 @@ function App() {
     }
   }, [settings.cleanupDays]);
 
+  // When a label is selected, load all articles and filter by label
+  useEffect(() => {
+    if (selectedLabelId !== null) {
+      selectFeed(null);
+      selectCategory(null);
+      loadNews({ limit: 500 });
+    }
+  }, [selectedLabelId, selectFeed, selectCategory, loadNews]);
+
   // When a category is selected, clear feed selection and load with filter
   useEffect(() => {
     if (selectedCategory) {
       selectFeed(null);
+      selectLabel(null);
       loadNews({
         unreadOnly: selectedCategory === 'unread',
         starredOnly: selectedCategory === 'starred',
@@ -45,6 +57,7 @@ function App() {
   useEffect(() => {
     if (selectedFeedId !== null) {
       selectCategory(null);
+      selectLabel(null);
     } else if (!selectedCategory) {
       clearNews();
     }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles, tokens, Table, TableHeader, TableBody, TableRow, TableCell, TableCellLayout, Button, Badge } from '@fluentui/react-components';
 import { StarFilled, StarRegular, DeleteRegular, GlobeRegular } from '@fluentui/react-icons';
-import { useNewsStore, useUIStore } from '../../stores';
+import { useNewsStore, useUIStore, useLabelsStore } from '../../stores';
 import type { News } from '../../types';
 
 const useStyles = makeStyles({
@@ -74,7 +74,12 @@ interface NewsListProps {
 export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   const styles = useStyles();
   const { news, selectedNewsId, loading, selectNews, loadNews, markStarred, deleteNews } = useNewsStore();
-  const { selectedCategory } = useUIStore();
+  const { selectedCategory, selectedLabelId } = useUIStore();
+  const { labels } = useLabelsStore();
+
+  const filteredNews = selectedLabelId
+    ? news.filter(n => n.labels.includes(selectedLabelId))
+    : news;
 
   // Load news when feedId changes (only if not in category mode)
   React.useEffect(() => {
@@ -123,7 +128,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
     );
   }
 
-  if (news.length === 0) {
+  if (filteredNews.length === 0) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -141,7 +146,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span className={styles.title}>{news.length} articles</span>
+        <span className={styles.title}>{filteredNews.length} articles</span>
       </div>
       <div className={styles.list}>
         <Table size="small">
@@ -155,7 +160,7 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {news.map((item) => (
+            {filteredNews.map((item) => (
               <TableRow
                 key={item.id}
                 className={`${styles.row} ${selectedNewsId === item.id ? styles.selectedRow : ''}`}
@@ -175,6 +180,23 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
                     <span title={item.title || ''}>
                       {item.title || 'Untitled'}
                     </span>
+                    {item.labels.length > 0 && (
+                      <span style={{ display: 'inline-flex', gap: '4px', marginLeft: '8px' }}>
+                        {item.labels.map(labelId => {
+                          const label = labels.find(l => l.id === labelId);
+                          return label ? (
+                            <Badge
+                              key={labelId}
+                              size="tiny"
+                              appearance="filled"
+                              style={{ backgroundColor: label.color || '#0078d4', fontSize: '10px' }}
+                            >
+                              {label.name}
+                            </Badge>
+                          ) : null;
+                        })}
+                      </span>
+                    )}
                   </TableCellLayout>
                 </TableCell>
                 <TableCell className={styles.read}>
