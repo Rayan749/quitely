@@ -1,10 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
   FluentProvider,
-  webLightTheme,
-  webDarkTheme,
   makeStyles,
 } from '@fluentui/react-components';
+import { macosLightTheme, macosDarkTheme, macosFonts } from '../../design-system';
 import { Sidebar } from './Sidebar';
 import { useSettingsStore } from '../../stores';
 
@@ -48,8 +47,8 @@ export function Layout({ children }: LayoutProps) {
   }, [settings.theme, systemDark]);
 
   return (
-    <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
-      <div className={styles.root} style={{ fontFamily: settings.fontFamily, fontSize: `${settings.fontSize}px` }}>
+    <FluentProvider theme={isDark ? macosDarkTheme : macosLightTheme}>
+      <div className={styles.root} style={{ fontFamily: settings.fontFamily || macosFonts.fontFamily, fontSize: settings.fontSize ? `${settings.fontSize}px` : macosFonts.baseFontSize }}>
         <Sidebar />
         <div className={styles.main}>
           {children}
