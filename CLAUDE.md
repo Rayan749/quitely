@@ -65,7 +65,7 @@ Settings are in a sidebar page (`SettingsPage`), not a dialog. Use `settingsStor
 
 ### Internationalization (i18n)
 
-Uses `react-i18next` for translations. Translation files in `src/locales/` (en.json, zh.json). Use `useTranslation` hook or `i18n.t()` function. Date formatting via `src/utils/i18nDate.ts`.
+Uses `react-i18next` for translations. Translation files in `src/locales/` (en.json, zh.json). Use `useTranslation` hook or `i18n.t()` function. Date formatting via `src/utils/i18nDate.ts`. The primary language is Chinese (zh.json) — always check `zh.json` for the correct user-facing strings before adding or modifying UI text. Never hardcode display strings; use translation keys.
 
 ### Backend Structure
 
@@ -119,6 +119,14 @@ src-tauri/src/
 - **Tauri config:** `src-tauri/tauri.conf.json` - app identifier, window settings, build commands
 - **Vite config:** `vite.config.ts` - React plugin, dev server on port 1420
 - **TypeScript:** Strict mode enabled, unused variable checks on
+
+## Naming
+
+The app display name is **"Quitely"** (capital Q). Always use this exact casing in user-visible strings: window titles, `productName` in `tauri.conf.json`, HTML `<title>`, tray menus, notifications, etc. The package/directory name `quitely` (lowercase) is fine for code identifiers and file paths.
+
+## Window
+
+Keep the native OS title bar and window decorations. Do NOT set `transparent`, `decorations: false`, or `titleBarStyle` in `tauri.conf.json`. Do NOT add `data-tauri-drag-region` or traffic light padding to the toolbar.
 
 ## Important Patterns
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "quitely",
+  "productName": "Quitely",
   "version": "0.1.0",
   "identifier": "com.rayan.quitely",
   "build": {
@@ -12,11 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "quitely",
+        "title": "Quitely",
         "width": 800,
-        "height": 600,
-        "transparent": true,
-        "titleBarStyle": "Overlay"
+        "height": 600
       }
     ],
     "security": {

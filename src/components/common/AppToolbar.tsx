@@ -14,10 +14,7 @@ const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: '78px', // space for macOS traffic lights
-    paddingRight: '8px',
-    paddingTop: '4px',
-    paddingBottom: '4px',
+    padding: '4px 8px',
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
@@ -140,7 +137,7 @@ export function AppToolbar() {
   };
 
   return (
-    <div className={styles.toolbar} data-tauri-drag-region="">
+    <div className={styles.toolbar}>
       <Toolbar>
         <AddFeedDialog />
 
