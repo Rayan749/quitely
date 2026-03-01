@@ -57,6 +57,28 @@ src/
 └── api/                 # Tauri invoke wrappers (commands.ts)
 ```
 
+**Design System (`src/design-system/`):** Custom design system with macOS-inspired tokens, Framer Motion animation primitives, and wrapper components. Barrel-exported from `src/design-system/index.ts`.
+
+```
+src/design-system/
+├── index.ts                    # Barrel exports
+├── theme/
+│   ├── tokens.ts              # macOS-inspired colors, radii, shadows, fonts, glass
+│   └── macosTheme.ts          # Fluent UI light/dark themes with macOS brand variants
+├── motion/
+│   ├── transitions.ts         # Spring configs (snappy, gentle, smooth, bouncy, fluent) + variant presets
+│   ├── PageTransition.tsx     # Fluent UI page transition (vertical slide + fade)
+│   ├── PanelTransition.tsx    # Panel expand/collapse
+│   ├── ListItemTransition.tsx # List item stagger
+│   ├── SpringScale.tsx        # Button press effect
+│   └── useReducedMotion.ts    # Respects prefers-reduced-motion
+└── components/
+    ├── GlassPanel.tsx         # Frosted glass panel
+    └── MacDialog.tsx          # macOS-style dialog wrapper
+```
+
+**Selection Indicators:** Sidebar and FeedTree use Framer Motion `layoutId` for animated pill background + left bar selection indicators. Each section (categories, feeds, labels) has its own `LayoutGroup` so indicators slide smoothly between items within a section. When adding new selectable lists, follow this pattern — see `SelectionIndicator` in `Sidebar.tsx` and `FeedSelectionIndicator` in `FeedTree.tsx`.
+
 **Frontend-Rust Communication:** Use `invoke()` from `@tauri-apps/api/core` to call Rust commands. Define commands in `src-tauri/src/commands/` with `#[tauri::command]` and register them in `lib.rs` `generate_handler![]`.
 
 ### Settings
@@ -194,5 +216,10 @@ const unlisten = await listen('event-name', (event) => {
 ## Design Documents
 
 Implementation plans are in `docs/plans/`:
-- `2026-02-27-rss-reader-redesign.md` - Overall architecture
-- `2026-02-27-phase1-implementation.md` through `2026-02-28-phase5-implementation.md` - Phase details
+- `2026-02-27-rss-reader-redesign.md` — Overall architecture
+- `2026-02-27-phase1-implementation.md` through `2026-02-28-phase8-implementation.md` — Phase 1–8 implementation details
+- `2026-02-28-i18n-complete-fix.md` / `2026-02-28-i18n-complete-fix-design.md` — i18n completion
+- `2026-02-28-phases6-8-design.md` — Phases 6–8 design document
+- `2026-03-01-feed-management-redesign.md` / `2026-03-01-feed-management-implementation.md` — Feed management (hover menu, drag-drop, context menu)
+- `2026-03-01-macos-animation-design.md` / `2026-03-01-macos-animation-implementation.md` — macOS animation & design system (tokens, themes, Framer Motion)
+- `2026-03-01-sidebar-indicator-design.md` / `2026-03-01-sidebar-indicator-implementation.md` — Sidebar selection indicators (layoutId pill + bar)
