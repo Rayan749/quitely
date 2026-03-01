@@ -6,6 +6,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as api from '../../api/commands';
 import { AddFeedDialog } from './AddFeedDialog';
+import { motion, AnimatePresence } from 'framer-motion';
+import { springs } from '../../design-system/motion/transitions';
 
 const useStyles = makeStyles({
   container: {
@@ -114,6 +116,7 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
   const isDragging = draggedFeedId === feed.id;
   const isDropTarget = dropTargetId === feed.id;
   const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = React.useState(true);
 
   const handleRenameSubmit = () => {
     if (renameValue.trim()) {
@@ -158,42 +161,68 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
     setDraggedFeedId(null);
   };
 
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    if (isFolder && hasChildren) {
+      e.stopPropagation();
+      setIsExpanded(!isExpanded);
+    }
+  };
+
   return (
     <div>
       <Menu>
         <MenuTrigger>
-          <div
-            className={`${styles.feedItem} ${isSelected ? styles.selected : ''} ${isDragging ? styles.dragging : ''} ${isDropTarget ? styles.dropTarget : ''}`}
-            style={{ paddingLeft: `${8 + level * 16}px` }}
-            onClick={() => onSelect(feed.id)}
-            onContextMenu={(e) => e.preventDefault()}
-            draggable={!isFolder}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+          <motion.div
+            animate={{
+              scale: isDragging ? 1.02 : 1,
+              boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : '0 0 0 rgba(0,0,0,0)',
+              opacity: isDragging ? 0.9 : 1,
+            }}
+            transition={springs.snappy}
           >
-            {hasChildren || isFolder ? <FolderFilled /> : <DocumentTextFilled />}
-            {isRenaming ? (
-              <Input
-                size="small"
-                value={renameValue}
-                onChange={(_, data) => setRenameValue(data.value)}
-                onBlur={handleRenameSubmit}
-                onKeyDown={(e) => e.key === 'Enter' && handleRenameSubmit()}
-                autoFocus
-              />
-            ) : (
-              <span>{feed.text || feed.title}</span>
-            )}
-            {!isRenaming && feed.unreadCount > 0 && (
-              <span className={styles.unreadBadge}>{feed.unreadCount}</span>
-            )}
-            {feed.status === 'error' && (
-              <span title={feed.errorMessage || 'Error'} style={{ color: '#d13438', fontSize: '12px' }}>⚠</span>
-            )}
-          </div>
+            <div
+              className={`${styles.feedItem} ${isSelected ? styles.selected : ''} ${isDropTarget ? styles.dropTarget : ''}`}
+              style={{ paddingLeft: `${8 + level * 16}px` }}
+              onClick={() => onSelect(feed.id)}
+              onContextMenu={(e) => e.preventDefault()}
+              draggable={!isFolder}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {isFolder && hasChildren ? (
+                <motion.span
+                  animate={{ rotate: isExpanded ? 0 : -90 }}
+                  transition={springs.snappy}
+                  style={{ display: 'inline-flex', cursor: 'pointer' }}
+                  onClick={handleToggleExpand}
+                >
+                  <ChevronDownRegular />
+                </motion.span>
+              ) : null}
+              {isFolder && !hasChildren ? <FolderFilled /> : !isFolder ? <DocumentTextFilled /> : null}
+              {isRenaming ? (
+                <Input
+                  size="small"
+                  value={renameValue}
+                  onChange={(_, data) => setRenameValue(data.value)}
+                  onBlur={handleRenameSubmit}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRenameSubmit()}
+                  autoFocus
+                />
+              ) : (
+                <span>{feed.text || feed.title}</span>
+              )}
+              {!isRenaming && feed.unreadCount > 0 && (
+                <span className={styles.unreadBadge}>{feed.unreadCount}</span>
+              )}
+              {feed.status === 'error' && (
+                <span title={feed.errorMessage || 'Error'} style={{ color: '#d13438', fontSize: '12px' }}>⚠</span>
+              )}
+            </div>
+          </motion.div>
         </MenuTrigger>
         <MenuPopover>
           <MenuList>
@@ -230,34 +259,44 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
           </MenuList>
         </MenuPopover>
       </Menu>
-      {hasChildren && (
-        <div className={styles.childContainer}>
-          {children.map(child => (
-            <FeedItem
-              key={child.id}
-              feed={child}
-              tree={tree}
-              styles={styles}
-              selectedFeedId={selectedFeedId}
-              onSelect={onSelect}
-              level={level + 1}
-              renamingId={renamingId}
-              renameValue={renameValue}
-              setRenamingId={setRenamingId}
-              setRenameValue={setRenameValue}
-              onRename={onRename}
-              onDelete={onDelete}
-              onRefresh={onRefresh}
-              onMarkRead={onMarkRead}
-              onMoveFeed={onMoveFeed}
-              draggedFeedId={draggedFeedId}
-              setDraggedFeedId={setDraggedFeedId}
-              dropTargetId={dropTargetId}
-              setDropTargetId={setDropTargetId}
-            />
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {hasChildren && isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={springs.gentle}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className={styles.childContainer}>
+              {children.map(child => (
+                <FeedItem
+                  key={child.id}
+                  feed={child}
+                  tree={tree}
+                  styles={styles}
+                  selectedFeedId={selectedFeedId}
+                  onSelect={onSelect}
+                  level={level + 1}
+                  renamingId={renamingId}
+                  renameValue={renameValue}
+                  setRenamingId={setRenamingId}
+                  setRenameValue={setRenameValue}
+                  onRename={onRename}
+                  onDelete={onDelete}
+                  onRefresh={onRefresh}
+                  onMarkRead={onMarkRead}
+                  onMoveFeed={onMoveFeed}
+                  draggedFeedId={draggedFeedId}
+                  setDraggedFeedId={setDraggedFeedId}
+                  dropTargetId={dropTargetId}
+                  setDropTargetId={setDropTargetId}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
