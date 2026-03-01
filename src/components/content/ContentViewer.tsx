@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useNewsStore, useLabelsStore, useSettingsStore } from '../../stores';
 import { getDateLocale } from '../../utils/i18nDate';
 import DOMPurify from 'dompurify';
+import { motion, AnimatePresence } from 'framer-motion';
+import { contentFadeVariants, springs } from '../../design-system/motion/transitions';
+import { useReducedMotion } from '../../design-system';
 
 const useStyles = makeStyles({
   container: {
@@ -102,6 +105,7 @@ export function ContentViewer() {
   const { labels, setArticleLabels } = useLabelsStore();
   const { settings } = useSettingsStore();
   const { t } = useTranslation();
+  const reducedMotion = useReducedMotion();
 
   const selectedNews = news.find(n => n.id === selectedNewsId);
 
@@ -160,8 +164,8 @@ export function ContentViewer() {
     );
   }
 
-  return (
-    <div className={styles.container}>
+  const articleContent = (
+    <>
       <div className={styles.header}>
         <h1 className={styles.title}>{selectedNews.title || t('contentViewer.untitled')}</h1>
         <div className={styles.actions}>
@@ -280,6 +284,28 @@ export function ContentViewer() {
           }}
         />
       </div>
+    </>
+  );
+
+  return (
+    <div className={styles.container}>
+      {reducedMotion ? (
+        articleContent
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedNews.id}
+            variants={contentFadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={springs.smooth}
+            style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}
+          >
+            {articleContent}
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }
