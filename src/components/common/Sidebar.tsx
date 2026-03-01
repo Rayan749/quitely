@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useUIStore, useLabelsStore, useFeedStore } from '../../stores';
 import { LabelDialog } from '../settings';
 import { FeedTree } from '../feeds';
+import { GlassPanel, SpringScale, macosColors, macosRadii } from '../../design-system';
+import { motion } from 'framer-motion';
+import { springs } from '../../design-system/motion/transitions';
 
 const useStyles = makeStyles({
   root: {
@@ -84,82 +87,85 @@ export function Sidebar() {
   };
 
   return (
-    <nav className={styles.root} style={{ width: '20%', minWidth: '180px', maxWidth: '300px' }}>
-      <div className={styles.content}>
-        {/* Categories Section */}
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>
-            {t('sidebar.categories')}
-          </div>
-          <div
-            className={`${styles.item} ${selectedCategory === 'unread' ? styles.itemSelected : ''}`}
-            onClick={() => handleCategoryClick('unread')}
-          >
-            <MailUnreadFilled />
-            <span>{t('sidebar.unread')}</span>
-          </div>
-          <div
-            className={`${styles.item} ${selectedCategory === 'starred' ? styles.itemSelected : ''}`}
-            onClick={() => handleCategoryClick('starred')}
-          >
-            <StarFilled />
-            <span>{t('sidebar.starred')}</span>
-          </div>
-          <div
-            className={`${styles.item} ${selectedCategory === 'deleted' ? styles.itemSelected : ''}`}
-            onClick={() => handleCategoryClick('deleted')}
-          >
-            <DeleteFilled />
-            <span>{t('sidebar.deleted')}</span>
-          </div>
-        </div>
-
-        <Divider />
-
-        {/* Feeds Section */}
-        <div className={styles.section}>
-          <FeedTree />
-        </div>
-
-        <Divider />
-
-        {/* Labels Section */}
-        <div className={styles.section}>
-          <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '8px' }}>
-            <span>{t('sidebar.labels')}</span>
-            <LabelDialog />
-          </div>
-          {labels.map((label) => (
-            <div
-              key={label.id}
-              className={`${styles.item} ${selectedLabelId === label.id ? styles.itemSelected : ''}`}
-              onClick={() => handleLabelClick(label.id)}
-            >
-              <span
-                className={styles.labelBadge}
-                style={{ backgroundColor: label.color || '#0078d4' }}
-              />
-              <span>{label.name}</span>
+    <GlassPanel style={{ width: '20%', minWidth: '180px', maxWidth: '300px' }}>
+      <nav className={styles.root} style={{ width: '100%', backgroundColor: 'transparent', borderRight: 'none' }}>
+        <div className={styles.content}>
+          {/* Categories Section */}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>
+              {t('sidebar.categories')}
             </div>
-          ))}
-          {labels.length === 0 && (
-            <div style={{ padding: '8px 16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
-              {t('sidebar.noLabels')}
-            </div>
-          )}
-        </div>
+            {(['unread', 'starred', 'deleted'] as const).map((category) => (
+              <motion.div
+                key={category}
+                animate={{
+                  backgroundColor: selectedCategory === category
+                    ? macosColors.light.selectedBackground
+                    : 'transparent',
+                }}
+                transition={springs.snappy}
+                style={{ borderRadius: macosRadii.small, padding: '4px 8px', margin: '0 8px', cursor: 'pointer' }}
+                onClick={() => handleCategoryClick(category)}
+              >
+                <div className={styles.item} style={{ backgroundColor: 'transparent' }}>
+                  {category === 'unread' && <MailUnreadFilled />}
+                  {category === 'starred' && <StarFilled />}
+                  {category === 'deleted' && <DeleteFilled />}
+                  <span>{t(`sidebar.${category}`)}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
-        <div className={styles.footer}>
-          <Button
-            appearance="subtle"
-            icon={<SettingsRegular />}
-            onClick={() => setSettingsPageOpen(true)}
-            style={{ width: '100%', justifyContent: 'flex-start' }}
-          >
-            {t('sidebar.settings')}
-          </Button>
+          <Divider />
+
+          {/* Feeds Section */}
+          <div className={styles.section}>
+            <FeedTree />
+          </div>
+
+          <Divider />
+
+          {/* Labels Section */}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '8px' }}>
+              <span>{t('sidebar.labels')}</span>
+              <LabelDialog />
+            </div>
+            {labels.map((label) => (
+              <div
+                key={label.id}
+                className={`${styles.item} ${selectedLabelId === label.id ? styles.itemSelected : ''}`}
+                onClick={() => handleLabelClick(label.id)}
+              >
+                <span
+                  className={styles.labelBadge}
+                  style={{ backgroundColor: label.color || '#0078d4' }}
+                />
+                <span>{label.name}</span>
+              </div>
+            ))}
+            {labels.length === 0 && (
+              <div style={{ padding: '8px 16px', fontSize: '12px', color: tokens.colorNeutralForeground3 }}>
+                {t('sidebar.noLabels')}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.footer}>
+            <SpringScale as="div">
+              <Button
+                appearance="subtle"
+                icon={<SettingsRegular />}
+                onClick={() => setSettingsPageOpen(true)}
+                style={{ width: '100%', justifyContent: 'flex-start' }}
+              >
+                {t('sidebar.settings')}
+              </Button>
+            </SpringScale>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </GlassPanel>
   );
 }
