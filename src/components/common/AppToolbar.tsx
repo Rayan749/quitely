@@ -8,14 +8,21 @@ import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { importOpml, exportOpml, updateAllFeeds } from '../../api/commands';
 import { useFeedStore, useNewsStore, useSettingsStore, useUIStore } from '../../stores';
 import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
+import { SpringScale } from '../../design-system';
 
 const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
     alignItems: 'center',
-    padding: '4px 8px',
+    paddingLeft: '78px', // space for macOS traffic lights
+    paddingRight: '8px',
+    paddingTop: '4px',
+    paddingBottom: '4px',
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+  },
+  searchBox: {
+    borderRadius: '8px',
   },
 });
 
@@ -133,49 +140,57 @@ export function AppToolbar() {
   };
 
   return (
-    <div className={styles.toolbar}>
+    <div className={styles.toolbar} data-tauri-drag-region="">
       <Toolbar>
         <AddFeedDialog />
 
-        <Button
-          appearance="subtle"
-          icon={<FolderAddRegular />}
-          onClick={handleNewFolder}
-          title={t('toolbar.newFolder')}
-        >
-          {t('toolbar.folder')}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={<FolderAddRegular />}
+            onClick={handleNewFolder}
+            title={t('toolbar.newFolder')}
+          >
+            {t('toolbar.folder')}
+          </Button>
+        </SpringScale>
 
         <ToolbarDivider />
 
-        <Button
-          appearance="subtle"
-          icon={<ArrowUploadFilled />}
-          onClick={handleImportOpml}
-          title="Import OPML"
-        >
-          {t('toolbar.import')}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={<ArrowUploadFilled />}
+            onClick={handleImportOpml}
+            title="Import OPML"
+          >
+            {t('toolbar.import')}
+          </Button>
+        </SpringScale>
 
-        <Button
-          appearance="subtle"
-          icon={<ArrowDownloadFilled />}
-          onClick={handleExportOpml}
-          title="Export OPML"
-        >
-          {t('toolbar.export')}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={<ArrowDownloadFilled />}
+            onClick={handleExportOpml}
+            title="Export OPML"
+          >
+            {t('toolbar.export')}
+          </Button>
+        </SpringScale>
 
         <ToolbarDivider />
 
-        <Button
-          appearance="subtle"
-          icon={<ArrowSyncFilled />}
-          onClick={handleRefresh}
-          title="Refresh all feeds"
-        >
-          {t('toolbar.refresh')}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={<ArrowSyncFilled />}
+            onClick={handleRefresh}
+            title="Refresh all feeds"
+          >
+            {t('toolbar.refresh')}
+          </Button>
+        </SpringScale>
 
         <ToolbarDivider />
 
@@ -193,28 +208,33 @@ export function AppToolbar() {
               }
             }
           } : undefined}
+          className={styles.searchBox}
           style={{ width: '200px' }}
         />
 
         <ToolbarDivider />
 
-        <Button
-          appearance="subtle"
-          icon={contentLayout === 'list' ? <TextColumnOneRegular /> : <GridRegular />}
-          onClick={handleLayoutToggle}
-          title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
-        >
-          {contentLayout === 'list' ? t('toolbar.list') : t('toolbar.newspaper')}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={contentLayout === 'list' ? <TextColumnOneRegular /> : <GridRegular />}
+            onClick={handleLayoutToggle}
+            title={contentLayout === 'list' ? 'Newspaper mode' : 'List mode'}
+          >
+            {contentLayout === 'list' ? t('toolbar.list') : t('toolbar.newspaper')}
+          </Button>
+        </SpringScale>
 
-        <Button
-          appearance="subtle"
-          icon={settings.theme === 'dark' ? <WeatherMoonRegular /> : <WeatherSunnyRegular />}
-          onClick={handleThemeToggle}
-          title={`Theme: ${themeLabel}`}
-        >
-          {themeLabel}
-        </Button>
+        <SpringScale as="span">
+          <Button
+            appearance="subtle"
+            icon={settings.theme === 'dark' ? <WeatherMoonRegular /> : <WeatherSunnyRegular />}
+            onClick={handleThemeToggle}
+            title={`Theme: ${themeLabel}`}
+          >
+            {themeLabel}
+          </Button>
+        </SpringScale>
       </Toolbar>
     </div>
   );
