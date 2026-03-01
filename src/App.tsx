@@ -7,6 +7,7 @@ import { useKeyboardShortcuts, useTrayEvents } from './hooks';
 import { cleanupDeletedNews } from './api/commands';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageTransition } from './design-system';
 
 function App() {
   const { loadFeeds, selectedFeedId, selectFeed } = useFeedStore();
@@ -73,27 +74,29 @@ function App() {
 
   return (
     <Layout>
-      {settingsPageOpen ? (
-        <SettingsPage />
-      ) : (
-        <>
-          <AppToolbar />
-          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-            {contentLayout === 'newspaper' ? (
-              <NewspaperView />
-            ) : (
-              <>
-                <div style={{ width: '25%', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
-                  <NewsList feedId={selectedFeedId ?? undefined} />
-                </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <ContentViewer />
-                </div>
-              </>
-            )}
-          </div>
-        </>
-      )}
+      <PageTransition transitionKey={settingsPageOpen ? 'settings' : 'main'}>
+        {settingsPageOpen ? (
+          <SettingsPage />
+        ) : (
+          <>
+            <AppToolbar />
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              {contentLayout === 'newspaper' ? (
+                <NewspaperView />
+              ) : (
+                <>
+                  <div style={{ width: '25%', minWidth: '250px', borderRight: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column' }}>
+                    <NewsList feedId={selectedFeedId ?? undefined} />
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <ContentViewer />
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </PageTransition>
     </Layout>
   );
 }
