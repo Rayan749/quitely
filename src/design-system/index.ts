@@ -3,7 +3,7 @@ export { macosLightTheme, macosDarkTheme } from './theme/macosTheme';
 export { macosColors, macosRadii, macosShadows, macosFonts, macosGlass } from './theme/tokens';
 
 // Motion
-export { springs, pageVariants, panelVariants, listItemVariants, dialogVariants, overlayVariants, springScaleVariants, contentFadeVariants, staggerContainer } from './motion/transitions';
+export { springs, pageVariants, fluentPageVariants, fluentPageTransition, panelVariants, listItemVariants, dialogVariants, overlayVariants, springScaleVariants, contentFadeVariants, staggerContainer } from './motion/transitions';
 export { PageTransition } from './motion/PageTransition';
 export { PanelTransition } from './motion/PanelTransition';
 export { ListItemTransition } from './motion/ListItemTransition';

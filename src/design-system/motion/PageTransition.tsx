@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { pageVariants, springs } from './transitions';
+import { fluentPageVariants, fluentPageTransition } from './transitions';
 import { useReducedMotion } from './useReducedMotion';
 
 interface PageTransitionProps {
@@ -18,11 +18,11 @@ export function PageTransition({ children, transitionKey }: PageTransitionProps)
     <AnimatePresence mode="wait">
       <motion.div
         key={transitionKey}
-        variants={pageVariants}
+        variants={fluentPageVariants}
         initial="initial"
         animate="animate"
         exit="exit"
-        transition={springs.smooth}
+        transition={fluentPageTransition}
         style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
       >
         {children}
