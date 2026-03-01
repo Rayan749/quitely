@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getDateLocale } from '../../utils/i18nDate';
 import { useNewsStore, useUIStore, useLabelsStore } from '../../stores';
 import type { News } from '../../types';
+import { ListItemTransition, SpringScale } from '../../design-system';
 
 const useStyles = makeStyles({
   container: {
@@ -165,70 +166,75 @@ export function NewsList({ feedId, onNewsSelect }: NewsListProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredNews.map((item) => (
-              <TableRow
-                key={item.id}
-                className={`${styles.row} ${selectedNewsId === item.id ? styles.selectedRow : ''}`}
-                onClick={() => handleRowClick(item)}
-              >
-                <TableCell>
-                  {item.isStarred ? (
-                    <StarFilled style={{ color: '#e6a23c' }} />
-                  ) : (
-                    !item.isRead && <Badge appearance="filled" color="danger" size="tiny" />
-                  )}
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout
-                    className={`${styles.titleCell} ${item.isRead ? styles.read : styles.unread}`}
-                  >
-                    <span title={item.title || ''}>
-                      {item.title || 'Untitled'}
-                    </span>
-                    {item.labels.length > 0 && (
-                      <span style={{ display: 'inline-flex', gap: '4px', marginLeft: '8px' }}>
-                        {item.labels.map(labelId => {
-                          const label = labels.find(l => l.id === labelId);
-                          return label ? (
-                            <Badge
-                              key={labelId}
-                              size="tiny"
-                              appearance="filled"
-                              style={{ backgroundColor: label.color || '#0078d4', fontSize: '10px' }}
-                            >
-                              {label.name}
-                            </Badge>
-                          ) : null;
-                        })}
-                      </span>
+            {filteredNews.map((item, index) => (
+              <ListItemTransition key={item.id} index={index}>
+                <TableRow
+                  className={`${styles.row} ${selectedNewsId === item.id ? styles.selectedRow : ''}`}
+                  onClick={() => handleRowClick(item)}
+                >
+                  <TableCell>
+                    {item.isStarred ? (
+                      <StarFilled style={{ color: '#e6a23c' }} />
+                    ) : (
+                      !item.isRead && <Badge appearance="filled" color="danger" size="tiny" />
                     )}
-                  </TableCellLayout>
-                </TableCell>
-                <TableCell className={styles.read}>
-                  {item.author || '-'}
-                </TableCell>
-                <TableCell className={styles.read}>
-                  {formatDate(item.publishedAt)}
-                </TableCell>
-                <TableCell>
-                  <div className={styles.meta}>
-                    <Button
-                      size="small"
-                      appearance="subtle"
-                      icon={item.isStarred ? <StarFilled /> : <StarRegular />}
-                      onClick={(e) => handleStarClick(e, item)}
-                      title={item.isStarred ? 'Unstar' : 'Star'}
-                    />
-                    <Button
-                      size="small"
-                      appearance="subtle"
-                      icon={<DeleteRegular />}
-                      onClick={(e) => handleDeleteClick(e, item)}
-                      title="Delete"
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
+                  </TableCell>
+                  <TableCell>
+                    <TableCellLayout
+                      className={`${styles.titleCell} ${item.isRead ? styles.read : styles.unread}`}
+                    >
+                      <span title={item.title || ''}>
+                        {item.title || 'Untitled'}
+                      </span>
+                      {item.labels.length > 0 && (
+                        <span style={{ display: 'inline-flex', gap: '4px', marginLeft: '8px' }}>
+                          {item.labels.map(labelId => {
+                            const label = labels.find(l => l.id === labelId);
+                            return label ? (
+                              <Badge
+                                key={labelId}
+                                size="tiny"
+                                appearance="filled"
+                                style={{ backgroundColor: label.color || '#0078d4', fontSize: '10px' }}
+                              >
+                                {label.name}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </span>
+                      )}
+                    </TableCellLayout>
+                  </TableCell>
+                  <TableCell className={styles.read}>
+                    {item.author || '-'}
+                  </TableCell>
+                  <TableCell className={styles.read}>
+                    {formatDate(item.publishedAt)}
+                  </TableCell>
+                  <TableCell>
+                    <div className={styles.meta}>
+                      <SpringScale as="span">
+                        <Button
+                          size="small"
+                          appearance="subtle"
+                          icon={item.isStarred ? <StarFilled /> : <StarRegular />}
+                          onClick={(e) => handleStarClick(e, item)}
+                          title={item.isStarred ? 'Unstar' : 'Star'}
+                        />
+                      </SpringScale>
+                      <SpringScale as="span">
+                        <Button
+                          size="small"
+                          appearance="subtle"
+                          icon={<DeleteRegular />}
+                          onClick={(e) => handleDeleteClick(e, item)}
+                          title="Delete"
+                        />
+                      </SpringScale>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </ListItemTransition>
             ))}
           </TableBody>
         </Table>
