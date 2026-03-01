@@ -2,13 +2,7 @@ import { useState } from 'react';
 import {
   makeStyles,
   tokens,
-  Dialog,
   DialogTrigger,
-  DialogSurface,
-  DialogTitle,
-  DialogBody,
-  DialogContent,
-  DialogActions,
   Button,
   Input,
   Label,
@@ -19,6 +13,7 @@ import { AddFilled } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useFeedStore } from '../../stores';
 import * as api from '../../api/commands';
+import { MacDialog, DialogBody, DialogTitle, DialogContent, DialogActions } from '../../design-system';
 
 const useStyles = makeStyles({
   form: {
@@ -162,31 +157,27 @@ export function AddFeedDialog({ open: controlledOpen, onOpenChange }: AddFeedDia
   // Controlled mode - no trigger button
   if (onOpenChange !== undefined) {
     return (
-      <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
-        <DialogSurface>
+      <MacDialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
+        <DialogBody>
           <DialogTitle>{t('addFeed.title')}</DialogTitle>
-          <DialogBody>
-            <AddFeedDialogContent onClose={handleClose} />
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
+          <AddFeedDialogContent onClose={handleClose} />
+        </DialogBody>
+      </MacDialog>
     );
   }
 
   // Uncontrolled mode - with trigger button
   return (
-    <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
+    <MacDialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
       <DialogTrigger disableButtonEnhancement>
         <Button appearance="primary" icon={<AddFilled />}>
           {t('addFeed.title')}
         </Button>
       </DialogTrigger>
-      <DialogSurface>
+      <DialogBody>
         <DialogTitle>{t('addFeed.title')}</DialogTitle>
-        <DialogBody>
-          <AddFeedDialogContent onClose={handleClose} />
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+        <AddFeedDialogContent onClose={handleClose} />
+      </DialogBody>
+    </MacDialog>
   );
 }
