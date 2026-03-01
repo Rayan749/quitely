@@ -6,6 +6,7 @@ export const springs = {
   gentle: { type: 'spring' as const, stiffness: 200, damping: 25 },
   smooth: { type: 'spring' as const, stiffness: 150, damping: 20 },
   bouncy: { type: 'spring' as const, stiffness: 400, damping: 15 },
+  fluent: { type: 'spring' as const, stiffness: 500, damping: 35 },
 } satisfies Record<string, Transition>;
 
 // Page transition variants (slide right-to-left)
@@ -72,4 +73,16 @@ export const staggerContainer: Variants = {
 // Reduced motion fallback: instant transitions
 export const reducedMotionTransition: Transition = {
   duration: 0,
+};
+
+// Fluent UI page transition (subtle vertical slide + fade)
+export const fluentPageVariants: Variants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+};
+
+export const fluentPageTransition: Transition = {
+  duration: 0.25,
+  ease: [0.33, 0, 0, 1], // Fluent UI deceleration curve
 };
