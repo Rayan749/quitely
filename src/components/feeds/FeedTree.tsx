@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as api from '../../api/commands';
 import { AddFeedDialog } from './AddFeedDialog';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { springs } from '../../design-system/motion/transitions';
 
 const useStyles = makeStyles({
@@ -40,12 +40,14 @@ const useStyles = makeStyles({
     padding: '6px 8px',
     cursor: 'pointer',
     borderRadius: '4px',
+    position: 'relative',
+    transition: 'background-color 0.1s',
     '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
+      backgroundColor: tokens.colorSubtleBackgroundHover,
     },
   },
   selected: {
-    backgroundColor: tokens.colorNeutralBackground1Selected,
+    fontWeight: '600',
   },
   unreadBadge: {
     backgroundColor: tokens.colorBrandBackground,
@@ -66,6 +68,39 @@ const useStyles = makeStyles({
     opacity: 0.5,
   },
 });
+
+function FeedSelectionIndicator() {
+  return (
+    <>
+      <motion.div
+        layoutId="feed-pill"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '4px',
+          backgroundColor: tokens.colorSubtleBackgroundSelected,
+          zIndex: 0,
+        }}
+        transition={springs.fluent}
+      />
+      <motion.div
+        layoutId="feed-bar"
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: '50%',
+          width: '3px',
+          height: '16px',
+          marginTop: '-8px',
+          borderRadius: '0 2px 2px 0',
+          backgroundColor: tokens.colorBrandForeground1,
+          zIndex: 1,
+        }}
+        transition={springs.fluent}
+      />
+    </>
+  );
+}
 
 function buildFeedTree(feeds: Feed[]): Map<number, Feed[]> {
   const tree = new Map<number, Feed[]>();
@@ -192,35 +227,38 @@ function FeedItem({ feed, tree, styles, selectedFeedId, onSelect, level = 0,
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {isFolder && hasChildren ? (
-                <motion.span
-                  animate={{ rotate: isExpanded ? 0 : -90 }}
-                  transition={springs.snappy}
-                  style={{ display: 'inline-flex', cursor: 'pointer' }}
-                  onClick={handleToggleExpand}
-                >
-                  <ChevronDownRegular />
-                </motion.span>
-              ) : null}
-              {isFolder && !hasChildren ? <FolderFilled /> : !isFolder ? <DocumentTextFilled /> : null}
-              {isRenaming ? (
-                <Input
-                  size="small"
-                  value={renameValue}
-                  onChange={(_, data) => setRenameValue(data.value)}
-                  onBlur={handleRenameSubmit}
-                  onKeyDown={(e) => e.key === 'Enter' && handleRenameSubmit()}
-                  autoFocus
-                />
-              ) : (
-                <span>{feed.text || feed.title}</span>
-              )}
-              {!isRenaming && feed.unreadCount > 0 && (
-                <span className={styles.unreadBadge}>{feed.unreadCount}</span>
-              )}
-              {feed.status === 'error' && (
-                <span title={feed.errorMessage || 'Error'} style={{ color: '#d13438', fontSize: '12px' }}>⚠</span>
-              )}
+              {isSelected && <FeedSelectionIndicator />}
+              <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                {isFolder && hasChildren ? (
+                  <motion.span
+                    animate={{ rotate: isExpanded ? 0 : -90 }}
+                    transition={springs.snappy}
+                    style={{ display: 'inline-flex', cursor: 'pointer' }}
+                    onClick={handleToggleExpand}
+                  >
+                    <ChevronDownRegular />
+                  </motion.span>
+                ) : null}
+                {isFolder && !hasChildren ? <FolderFilled /> : !isFolder ? <DocumentTextFilled /> : null}
+                {isRenaming ? (
+                  <Input
+                    size="small"
+                    value={renameValue}
+                    onChange={(_, data) => setRenameValue(data.value)}
+                    onBlur={handleRenameSubmit}
+                    onKeyDown={(e) => e.key === 'Enter' && handleRenameSubmit()}
+                    autoFocus
+                  />
+                ) : (
+                  <span>{feed.text || feed.title}</span>
+                )}
+                {!isRenaming && feed.unreadCount > 0 && (
+                  <span className={styles.unreadBadge}>{feed.unreadCount}</span>
+                )}
+                {feed.status === 'error' && (
+                  <span title={feed.errorMessage || 'Error'} style={{ color: '#d13438', fontSize: '12px' }}>⚠</span>
+                )}
+              </span>
             </div>
           </motion.div>
         </MenuTrigger>
@@ -368,29 +406,31 @@ export function FeedTree() {
           </MenuList>
         </MenuPopover>
       </Menu>
-      {rootFeeds.map(feed => (
-        <FeedItem
-          key={feed.id}
-          feed={feed}
-          tree={tree}
-          styles={styles}
-          selectedFeedId={selectedFeedId}
-          onSelect={selectFeed}
-          renamingId={renamingId}
-          renameValue={renameValue}
-          setRenamingId={setRenamingId}
-          setRenameValue={setRenameValue}
-          onRename={handleRename}
-          onDelete={handleDelete}
-          onRefresh={handleRefresh}
-          onMarkRead={handleMarkRead}
-          onMoveFeed={handleMoveFeed}
-          draggedFeedId={draggedFeedId}
-          setDraggedFeedId={setDraggedFeedId}
-          dropTargetId={dropTargetId}
-          setDropTargetId={setDropTargetId}
-        />
-      ))}
+      <LayoutGroup id="feeds">
+        {rootFeeds.map(feed => (
+          <FeedItem
+            key={feed.id}
+            feed={feed}
+            tree={tree}
+            styles={styles}
+            selectedFeedId={selectedFeedId}
+            onSelect={selectFeed}
+            renamingId={renamingId}
+            renameValue={renameValue}
+            setRenamingId={setRenamingId}
+            setRenameValue={setRenameValue}
+            onRename={handleRename}
+            onDelete={handleDelete}
+            onRefresh={handleRefresh}
+            onMarkRead={handleMarkRead}
+            onMoveFeed={handleMoveFeed}
+            draggedFeedId={draggedFeedId}
+            setDraggedFeedId={setDraggedFeedId}
+            dropTargetId={dropTargetId}
+            setDropTargetId={setDropTargetId}
+          />
+        ))}
+      </LayoutGroup>
       {feeds.length === 0 && (
         <div style={{ padding: '16px', color: tokens.colorNeutralForeground3 }}>
           {t('feedTree.empty')}
